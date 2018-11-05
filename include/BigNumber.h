@@ -170,35 +170,26 @@ class BigNumber {
 			}
 
 			// At this point, both signs are equal.
-			BigNumber larger;  // larger is not a pointer, since it will hold the result.
-			const BigNumber* smaller;  // smaller is a pointer to the smaller number, readonly.
-			if (this->m_values.size() >= number.m_values.size()) {  // Find smaller and larger number.
-				larger = *this;
-				smaller = &number;
-			} else {
-				larger = number;
-				smaller = this;
-			}
+			BigNumber result = *this;  // result is not a pointer, since it will hold the result.
 
-			for (int i = 0; i < smaller->m_values.size(); i++) {
-				int dif = larger.m_values[i] - smaller->m_values[i];
-
+			for (int i = 0; i < number.m_values.size(); i++) {
+				int dif = result.m_values[i] - number.m_values[i];
 				if (dif < 0) {
-					for (int j = i + 1; j < larger.m_values.size(); j++) {
-						if (larger.m_values[j] == 0) {
-							larger.m_values[j] = 9;
+					for (int j = i + 1; j < result.m_values.size(); j++) {
+						if (result.m_values[j] == 0) {
+							result.m_values[j] = 9;
 						} else {
 							dif += 10;
-							larger.m_values[j]--;
+							result.m_values[j]--;
 							break;
 						}
 					}
 				}
 
-				larger.m_values[i] = dif;
+				result.m_values[i] = dif;
 			}
-			larger.afterOperation();
-			return larger;
+			result.afterOperation();
+			return result;
 		}
 
 		/**
