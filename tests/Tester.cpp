@@ -135,6 +135,27 @@ int main(int argc, char *argv[]) {
 			  BigNumber(3));
 
 
+	TF_ASSERT("Mod 1",
+			  BigNumber(10) % BigNumber(3),
+			  BigNumber(1));
+
+	TF_ASSERT("Mod 2",
+			  BigNumber(12) % BigNumber(3),
+			  BigNumber(0));
+
+	TF_ASSERT("Mod 3",
+			  BigNumber(55) % BigNumber(10),
+			  BigNumber(5));
+
+	TF_ASSERT("Mod 4",
+			  BigNumber(9) % BigNumber(10),
+			  BigNumber(9));
+
+	TF_ASSERT("Mod 5",
+			  BigNumber(460) % BigNumber(360),
+			  BigNumber(100));
+
+
 	TF_ASSERT("Times10 1",
 			  BigNumber(31).times10(),
 			  BigNumber(310));

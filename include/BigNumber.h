@@ -268,16 +268,11 @@ class BigNumber {
 		 * @return the result of the module operator.
 		 */
 		BigNumber operator%(const BigNumber& number) const {
-			if (number == BigNumber(0)) {
-				throw new std::invalid_argument("Module by 0 is undefined.");
-			}
 			if (!this->m_positive || !number.m_positive) {
 				throw new std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
 			}
-			BigNumber result = *this;
-			while (result >= number) {
-				result -= number;
-			}
+			// Use division to calculate module. Since the division is rounded, it works.
+			BigNumber result = *this - (number * (*this / number));
 			result.afterOperation();
 			return result;
 		}
