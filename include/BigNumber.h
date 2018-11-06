@@ -58,12 +58,13 @@ class BigNumber {
 					this->m_positive = string.at(0) == '+';
 					string = string.substr(1);  // remove the signal.
 				}
-				for (int i = string.size() - 1; i >= 0; i--) {
+				for (int i = string.size() - 1; i >= 0; i--) {    // from end to start, so that string 321 is represented as vector {1, 2, 3}
 					this->m_values.push_back(charToInt(string[i]));
 				}
 			} else {
 				this->m_values.push_back(0);
 			}
+			this->removeLeftZeros();  // call removeLeftZeros, and not afterOperation since the object has not been completelly initialized.
 		}
 
 		BigNumber () : BigNumber("0") {}  // zero by default.
@@ -444,6 +445,15 @@ class BigNumber {
 		 */
 		long long asLongLong() {
 			return std::stoll(this->asString());
+		}
+
+
+		/**
+		 * @brief lenght method to get the lenght of given number, counting the digits.
+		 * @return the lenght of this BigNumber.
+		 */
+		long long lenght() {
+			return this->m_values.size();
 		}
 
 

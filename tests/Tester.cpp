@@ -317,6 +317,15 @@ int main(int argc, char *argv[]) {
 			  true);
 
 
+	TF_ASSERT("Lenght 1",
+			  BigNumber("-123456789").lenght() == 9,
+			  true);
+
+	TF_ASSERT("Lenght 2",
+			  BigNumber("00001").lenght() == 1,
+			  true);
+
+
 
 	return TF_PRINT_RESULTS();
 }
