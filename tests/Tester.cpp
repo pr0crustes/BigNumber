@@ -335,6 +335,15 @@ int main(int argc, char *argv[]) {
 			  false);
 
 
+	TF_ASSERT("isZero 1",
+			  BigNumber("0").isZero(),
+			  true);
+
+	TF_ASSERT("isZero 2",
+			  BigNumber("10").isZero(),
+			  false);
+
+
 
 	return TF_PRINT_RESULTS();
 }

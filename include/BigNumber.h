@@ -278,6 +278,7 @@ class BigNumber {
 			return result;
 		}
 
+
 		/*
 		 * Assigment operators.
 		 */
@@ -463,6 +464,15 @@ class BigNumber {
 		 */
 		bool isOdd() const {
 			return this->m_values[0] & 1;
+		}
+
+
+		/**
+		 * @brief isZero methot that tests if a number is zero, faster than Number == BigNumber(0).
+		 * @return if the object is 0.
+		 */
+		bool isZero() const {
+			return this->m_values.size() == 1 && this->m_values[0] == 0;
 		}
 
 
