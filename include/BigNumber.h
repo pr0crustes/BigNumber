@@ -457,6 +457,15 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief isOdd simple method to se if a BigNumber is odd or not.
+		 * @return if the number is odd.
+		 */
+		bool isOdd() const {
+			return this->m_values[0] & 1;
+		}
+
+
 	private:
 
 		bool m_positive = true;  // positive by default.

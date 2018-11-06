@@ -326,6 +326,15 @@ int main(int argc, char *argv[]) {
 			  true);
 
 
+	TF_ASSERT("Odd 1",
+			  BigNumber("00001").isOdd(),
+			  true);
+
+	TF_ASSERT("Odd 2",
+			  BigNumber("20").isOdd(),
+			  false);
+
+
 
 	return TF_PRINT_RESULTS();
 }
