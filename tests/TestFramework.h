@@ -52,4 +52,5 @@ void TF_SET_ONLY_FAIL(bool b) {
 	} \
 }
 
+
 #endif // TESTFRAMEWORK_H

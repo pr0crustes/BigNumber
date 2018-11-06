@@ -177,6 +177,18 @@ int main(int argc, char *argv[]) {
 			  BigNumber(7) < BigNumber(7),
 			  false);
 
+	TF_ASSERT("Comp < 4",
+			  BigNumber(-7) < BigNumber(7),
+			  true);
+
+	TF_ASSERT("Comp < 5",
+			  BigNumber(10) < BigNumber(100),
+			  true);
+
+	TF_ASSERT("Comp < 6",
+			  BigNumber(-8) < BigNumber(-3),
+			  true);
+
 
 	TF_ASSERT("Comp >= 1",
 			  BigNumber(666) >= BigNumber(666),
