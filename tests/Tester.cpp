@@ -308,6 +308,15 @@ int main(int argc, char *argv[]) {
 			  true);
 
 
+	TF_ASSERT("AsLongLong 1",
+			  BigNumber(123456789).asLongLong() == 123456789,
+			  true);
+
+	TF_ASSERT("AsLongLong 2",
+			  BigNumber("-123456789").asLongLong() == -123456789,
+			  true);
+
+
 
 	return TF_PRINT_RESULTS();
 }

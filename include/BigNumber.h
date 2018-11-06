@@ -437,6 +437,16 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief asLongLong returns a long long representation of this BigNumber object.
+		 * Throws exeption of type std::out_of_range if the number does not fit.
+		 * @return
+		 */
+		long long asLongLong() {
+			return std::stoll(this->asString());
+		}
+
+
 	private:
 
 		bool m_positive = true;  // positive by default.
