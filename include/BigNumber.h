@@ -105,7 +105,7 @@ class BigNumber {
 		 */
 		BigNumber operator-() const {
 			BigNumber number = *this;
-			if (number != BigNumber(0)) {
+			if (!number.isZero()) {
 				number.m_positive = !number.m_positive;
 			}
 			return number;
@@ -127,10 +127,10 @@ class BigNumber {
 				return -(number - this->absoluteValue());
 			}
 
-			if (number == BigNumber(0)) {
+			if (number.isZero()) {
 				return *this;
 			}
-			if (*this == BigNumber(0)) {
+			if (this->isZero()) {
 				return number;
 			}
 			// At this point, both signs are equal.
@@ -170,10 +170,10 @@ class BigNumber {
 				return -(number + this->absoluteValue());
 			}
 
-			if (number == BigNumber(0)) {
+			if (number.isZero()) {
 				return *this;
 			}
-			if (*this == BigNumber(0)) {
+			if (this->isZero()) {
 				return number;
 			}
 
@@ -240,7 +240,7 @@ class BigNumber {
 		 * @return result of division.
 		 */
 		BigNumber operator/(const BigNumber& number) const {
-			if (number == BigNumber(0)) {
+			if (number.isZero()) {
 				throw new std::invalid_argument("Division / Module by 0 is undefined.");
 			}
 			if (number > *this) {
@@ -501,7 +501,7 @@ class BigNumber {
 		 */
 		void afterOperation() {
 			this->removeLeftZeros();
-			if (this->absoluteValue() == BigNumber(0)) {  // prevents -0.
+			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
 			}
 		}
