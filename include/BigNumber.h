@@ -443,7 +443,7 @@ class BigNumber {
 		 * Throws exeption of type std::out_of_range if the number does not fit.
 		 * @return
 		 */
-		long long asLongLong() {
+		long long asLongLong() const {
 			return std::stoll(this->asString());
 		}
 
@@ -452,7 +452,7 @@ class BigNumber {
 		 * @brief lenght method to get the lenght of given number, counting the digits.
 		 * @return the lenght of this BigNumber.
 		 */
-		long long lenght() {
+		long long lenght() const {
 			return this->m_values.size();
 		}
 
