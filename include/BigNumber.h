@@ -243,6 +243,9 @@ class BigNumber {
 			if (number.isZero()) {
 				throw new std::invalid_argument("Division / Module by 0 is undefined.");
 			}
+			if (number.isOne()) {
+				return *this;
+			}
 			if (number > *this) {
 				return BigNumber(0);
 			}
@@ -279,6 +282,12 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief pow power method. Solves with Exponentiation by Squaring.
+		 * Throws an exception in case of 0 to the power of 0 and in case of any number to a negative one.
+		 * @param number the desired power.
+		 * @return THIS to the power of NUMBER.
+		 */
 		BigNumber pow(const BigNumber& number) const {
 			if (this->isZero() && number.isZero()) {
 				throw new std::invalid_argument("Zero to the power of Zero is undefined.");

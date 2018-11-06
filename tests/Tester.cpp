@@ -134,6 +134,10 @@ int main(int argc, char *argv[]) {
 			  BigNumber(20) / BigNumber(6),
 			  BigNumber(3));
 
+	TF_ASSERT("Div 5",
+			  BigNumber(100) / BigNumber(1),
+			  BigNumber(100));
+
 
 	TF_ASSERT("Mod 1",
 			  BigNumber(10) % BigNumber(3),
