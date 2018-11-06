@@ -344,6 +344,19 @@ int main(int argc, char *argv[]) {
 			  false);
 
 
+	TF_ASSERT("isOne 1",
+			  BigNumber("1").isOne(),
+			  true);
+
+	TF_ASSERT("isOne 2",
+			  BigNumber("10").isOne(),
+			  false);
+
+	TF_ASSERT("isOne 3",
+			  BigNumber("-1").isOne(),
+			  false);
+
+
 
 	return TF_PRINT_RESULTS();
 }

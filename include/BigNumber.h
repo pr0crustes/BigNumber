@@ -476,6 +476,15 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief isOne method that tests if a number is one, faster than creating an object.
+		 * @return is this object is 1.
+		 */
+		bool isOne() const {
+			return this->m_positive && this->m_values.size() == 1 && this->m_values[0] == 1;
+		}
+
+
 	private:
 
 		bool m_positive = true;  // positive by default.
