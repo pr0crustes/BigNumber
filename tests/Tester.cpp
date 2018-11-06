@@ -357,6 +357,31 @@ int main(int argc, char *argv[]) {
 			  false);
 
 
+	TF_ASSERT("Pow 1",
+			  BigNumber(2).pow(BigNumber(2)),
+			  BigNumber(4));
+
+	TF_ASSERT("Pow 2",
+			  BigNumber(10).pow(BigNumber(10)),
+			  BigNumber(10000000000));
+
+	TF_ASSERT("Pow 3",
+			  BigNumber(7).pow(BigNumber(0)),
+			  BigNumber(1));
+
+	TF_ASSERT("Pow 4",
+			  BigNumber(0).pow(BigNumber(2)),
+			  BigNumber(0));
+
+	TF_ASSERT("Pow 5",
+			  BigNumber(-5).pow(BigNumber(2)),
+			  BigNumber(25));
+
+	TF_ASSERT("Pow 6",
+			  BigNumber(-5).pow(BigNumber(3)),
+			  BigNumber(-125));
+
+
 
 	return TF_PRINT_RESULTS();
 }

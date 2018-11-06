@@ -279,6 +279,28 @@ class BigNumber {
 		}
 
 
+		BigNumber pow(const BigNumber& number) const {
+			if (this->isZero() && number.isZero()) {
+				throw new std::invalid_argument("Zero to the power of Zero is undefined.");
+			}
+			if (number < BigNumber(0)) {
+				throw new std::invalid_argument("Power cannot be negative, yet.");
+			}
+			if (this->isZero()) {
+				return BigNumber(0);
+			}
+			if (number.isZero()) {
+				return BigNumber(1);
+			}
+
+			if (number.isOdd()) {
+				return *this * (*this * *this).pow((number - 1) / 2);
+			} else {
+				return (*this * *this).pow(number / 2);
+			}
+		}
+
+
 		/*
 		 * Assigment operators.
 		 */
