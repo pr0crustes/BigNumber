@@ -97,7 +97,6 @@ class BigNumber {
 			return *this;
 		}
 
-
 		/**
 		 * @brief operator - the same as multiplying by -1.
 		 * @return returns the bignumber with reverted signal.
@@ -109,7 +108,6 @@ class BigNumber {
 			}
 			return number;
 		}
-
 
 		/*
 		 * Binary operators.
@@ -125,37 +123,39 @@ class BigNumber {
 			} else if (!this->m_positive && number.m_positive) {
 				return -(number - this->absoluteValue());
 			}
-
-			if (number == BigNumber(0)) {
-				return *this;
-			}
-			if (*this == BigNumber(0)) {
-				return number;
-			}
 			// At this point, both signs are equal.
-			BigNumber result = *this;  // larger is not a pointer, since it will hold the result.
+			BigNumber larger;  // larger is not a pointer, since it will hold the result.
+			const BigNumber* smaller;  // smaller is a pointer to the smaller number, readonly.
+			if (this->m_values.size() >= number.m_values.size()) {  // Find smaller and larger number.
+				larger = *this;
+				smaller = &number;
+			} else {
+				larger = number;
+				smaller = this;
+			}
 
-			for (int i = 0; i < number.m_values.size(); i++) {
-				int digit = number.m_values[i];
-				if (i < result.m_values.size()) {
-					result.m_values[i] += digit;
-				} else {  // no digit in this position, add to the end of vector.
-					result.m_values.push_back(digit);
-				}
+			for (int i = 0; i < smaller->m_values.size(); i++) {
+				larger.m_values[i] += smaller->m_values[i];
 
 #ifdef BIG_NUMBER_DEBUG
-				if (result.m_values[i] > 19) {
+				if (larger.m_values[i] > 19) {
 					std::string message("Invalid value in m_value: ");
-					message.push_back(result.m_values[i]);
+					message.push_back(larger.m_values[i]);
 					throw std::invalid_argument(message);
 				}
 #endif
-				result.carryOver();
+				if (larger.m_values[i] > 9) {
+					larger.m_values[i] %= 10;
+					if (i + 1 < smaller->m_values.size()) {
+						larger.m_values[i+1] += 1;
+					} else {
+						larger.m_values.push_back(1);
+					}
+				}
 			}
-			result.afterOperation();
-			return result;
+			larger.afterOperation();
+			return larger;
 		}
-
 
 		/**
 		 * @brief operator - minus operator. Subtracts one BigNumber from this.
@@ -169,28 +169,11 @@ class BigNumber {
 				return -(number + this->absoluteValue());
 			}
 
-			if (number == BigNumber(0)) {
-				return *this;
-			}
-			if (*this == BigNumber(0)) {
-				return number;
-			}
-
 			// At this point, both signs are equal.
-			// To subtract one number from other, it is important to know the larger and the smaller one,
-			// since when subtracting 20 from 2 what you do is 20 - 2  and then reverse the signal.
-			BigNumber result;  // result is not a pointer, since it will hold the result.
-			const BigNumber* smaller;  // pointer to the smaller number. Read only.
-			if (this->m_values.size() >= number.m_values.size()) {
-				result = *this;
-				smaller = &number;
-			} else {
-				result = number;
-				smaller = this;
-			}
+			BigNumber result = *this;  // result is not a pointer, since it will hold the result.
 
-			for (int i = 0; i < smaller->m_values.size(); i++) {
-				int dif = result.m_values[i] - smaller->m_values[i];
+			for (int i = 0; i < number.m_values.size(); i++) {
+				int dif = result.m_values[i] - number.m_values[i];
 				if (dif < 0) {
 					for (int j = i + 1; j < result.m_values.size(); j++) {
 						if (result.m_values[j] == 0) {
@@ -205,11 +188,9 @@ class BigNumber {
 
 				result.m_values[i] = dif;
 			}
-			result.m_positive = *this >= number;  // If this is less than the number being subtracted, result will be negative.
 			result.afterOperation();
 			return result;
 		}
-
 
 		/**
 		 * @brief operator * the multiplier operator.
@@ -230,23 +211,18 @@ class BigNumber {
 			return product;
 		}
 
-
 		/**
 		 * @brief operator / divide one number by other.
 		 * Keep in mind that the return is a BigNumber, so 10 / 4 is 2, not 2.5.
-		 * If you want the reaminder of a division, see the `%` operator.
 		 * @param number number to divide by.
 		 * @return result of division.
 		 */
 		BigNumber operator/(const BigNumber& number) const {
 			if (number == BigNumber(0)) {
-				throw new std::invalid_argument("Division / Module by 0 is undefined.");
+				throw new std::invalid_argument("Division by 0 is undefined.");
 			}
 			if (number > *this) {
 				return BigNumber(0);
-			}
-			if (number == *this) {
-				return BigNumber(1);
 			}
 
 			BigNumber absoluteThis = this->absoluteValue();
@@ -389,7 +365,6 @@ class BigNumber {
 			return stream;
 		}
 
-
 		friend std::istream& operator>>(std::istream& istream, BigNumber& number) {
 			std::string in;
 			istream >> in;
@@ -397,10 +372,6 @@ class BigNumber {
 			return istream;
 		}
 
-		/**
-		 * @brief asString methot that creates a string representation of a BigNumber.
-		 * @return a string representing the BigNumber.
-		 */
 		std::string asString() const {
 			std::stringstream ss;
 			if (!this->m_positive) {
@@ -428,7 +399,7 @@ class BigNumber {
 		}
 
 		/**
-		 * @brief times10 method that multiplies the number by 10, n times. Made to be fast.
+		 * @brief times10 functions that multiplies the number by 10, n times.
 		 * @param times how many times it shoud be multiplied by 10. Default is 1.
 		 * @return the number times 10 n times.
 		 */
@@ -441,9 +412,18 @@ class BigNumber {
 			return temp;
 		}
 
+		/**
+		 * @brief divisionRemainder returns the reaminder of a division by another BigNumber.
+		 * @param number the number to divide by.
+		 * @return the remainder of division.
+		 */
+		BigNumber divisionRemainder(BigNumber& number) {
+			BigNumber quotient = *this / number;
+			return *this - (quotient * number);
+		}
+
 
 	private:
-
 		bool m_positive = true;  // positive by default.
 		std::vector<int> m_values;  // vector that will hold the digts. vector {1, 2, 3} means number 321.
 
@@ -469,25 +449,6 @@ class BigNumber {
 			this->removeLeftZeros();
 			if (this->absoluteValue() == BigNumber(0)) {  // prevents -0.
 				this->m_positive = true;
-			}
-		}
-
-
-		/**
-		 * @brief carryOver method that carry over digits in addition, making sure no number in m_vector is bigger than 9.
-		 */
-		void carryOver() {
-			for (int i = 0; i < this->m_values.size(); i++) {
-				if (this->m_values[i] > 9) {
-					this->m_values[i] %= 10;
-					if (i + 1 < this->m_values.size()) {
-						this->m_values[i+1]++;
-					} else {
-						this->m_values.push_back(1);
-					}
-					this->carryOver();
-					break;
-				}
 			}
 		}
 
