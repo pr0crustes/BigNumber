@@ -1,4 +1,5 @@
 #include "TestFramework.h"
+
 #include "../include/BigNumber.h"
 
 
@@ -393,6 +394,17 @@ int main(int argc, char *argv[]) {
 			  BigNumber(-5).pow(BigNumber(3)),
 			  BigNumber(-125));
 
+
+
+	/************ Util tests ************/
+
+	TF_ASSERT("Random 1",
+			  BigNumber::randomBigNumber(100).lenght(),
+			  (long long) 100);
+
+	TF_ASSERT("Random 2",
+			  BigNumber::randomBigNumber(1024).lenght(),
+			  (long long) 1024);
 
 
 	return TF::printResult();

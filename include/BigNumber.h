@@ -2,9 +2,9 @@
 #define BIGNUMBER_H
 
 #include <string>
-#include <algorithm>
 #include <vector>
 #include <sstream>
+#include <random>
 
 #include <iostream>
 #include <stdexcept>
@@ -71,6 +71,21 @@ class BigNumber {
 
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}
 
+		static BigNumber randomBigNumber(unsigned int size) {
+			if (size <= 0) {
+				throw new std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
+			}
+
+			std::stringstream ss;
+			std::random_device rand_gen;
+
+			while (ss.tellp() < size) {
+				ss << rand_gen();
+			}
+
+			std::string randomDigits = ss.str().substr(0, size);
+			return BigNumber(randomDigits);
+		}
 
 		/*
 		 * Copy constructor.
