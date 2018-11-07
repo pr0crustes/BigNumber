@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]) {
 
-	TF_SET_ONLY_FAIL(true);
+	TF::setOnlyFail(true);
 
 	TF_ASSERT("Constructor 1",
 			  BigNumber("100"),
@@ -58,6 +58,14 @@ int main(int argc, char *argv[]) {
 	TF_ASSERT("Sum 9",
 			  BigNumber(19) + BigNumber(1),
 			  BigNumber(20));
+
+	TF_ASSERT("Sum 10",
+			  BigNumber(19) + 1,
+			  BigNumber(20));
+
+	TF_ASSERT("Sum 11",
+			  BigNumber(5) + 2,
+			  BigNumber(7));
 
 
 	TF_ASSERT("Sub 1",
@@ -387,5 +395,5 @@ int main(int argc, char *argv[]) {
 
 
 
-	return TF_PRINT_RESULTS();
+	return TF::printResult();
 }
