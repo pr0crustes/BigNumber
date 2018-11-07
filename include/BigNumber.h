@@ -71,6 +71,12 @@ class BigNumber {
 
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}
 
+
+		/**
+		 * @brief static method that generate random BigNumbers.
+		 * @param size the desired BigNumber size.
+		 * @return a random BigNumber with the desired number of digits.
+		 */
 		static BigNumber randomBigNumber(unsigned int size) {
 			if (size <= 0) {
 				throw new std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
@@ -86,6 +92,7 @@ class BigNumber {
 			std::string randomDigits = ss.str().substr(0, size);
 			return BigNumber(randomDigits);
 		}
+
 
 		/*
 		 * Copy constructor.
