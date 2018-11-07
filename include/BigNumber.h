@@ -221,7 +221,7 @@ class BigNumber {
 			BigNumber product;
 			for (int i = 0; i < this->m_values.size(); i++) {
 				BigNumber partialProduct;
-				for (int j = 0; j < this->m_values[i]; j++) {  // repeate `i` times.
+				for (int j = 0; j < this->m_values[i]; j++) {  // repeate m_values[i] times.
 					partialProduct += number.absoluteValue();
 				}
 				product += partialProduct.times10(i);

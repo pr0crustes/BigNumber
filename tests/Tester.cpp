@@ -59,6 +59,14 @@ int main(int argc, char *argv[]) {
 			  BigNumber(19) + BigNumber(1),
 			  BigNumber(20));
 
+	TF_ASSERT("Sum 10",
+			  BigNumber(19) + 1,
+			  BigNumber(20));
+
+	TF_ASSERT("Sum 11",
+			  BigNumber(5) + 2,
+			  BigNumber(7));
+
 
 	TF_ASSERT("Sub 1",
 			  BigNumber(100) - BigNumber(50),
