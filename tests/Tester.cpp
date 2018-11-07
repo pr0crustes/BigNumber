@@ -395,9 +395,6 @@ int main(int argc, char *argv[]) {
 			  BigNumber(-125));
 
 
-
-	/************ Util tests ************/
-
 	TF_ASSERT("Random 1",
 			  BigNumber::randomBigNumber(100).lenght(),
 			  (long long) 100);
@@ -405,6 +402,16 @@ int main(int argc, char *argv[]) {
 	TF_ASSERT("Random 2",
 			  BigNumber::randomBigNumber(1024).lenght(),
 			  (long long) 1024);
+
+
+	TF_ASSERT("Random in Range 1",
+			  BigNumber::randomBigNumberInRange(10, 100) >= 10,
+			  true);
+
+	TF_ASSERT("Random in Range 2",
+			  BigNumber::randomBigNumberInRange(100, 1000) < 1000,
+			  true);
+
 
 
 	return TF::printResult();

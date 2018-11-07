@@ -1,6 +1,7 @@
 #ifndef BIGNUMBER_H
 #define BIGNUMBER_H
 
+
 #include <string>
 #include <vector>
 #include <sstream>
@@ -91,6 +92,34 @@ class BigNumber {
 
 			std::string randomDigits = ss.str().substr(0, size);
 			return BigNumber(randomDigits);
+		}
+
+
+		/**
+		 * @brief randomBigNumberInRange generate a random BigNumber in desired range, excluding higher.
+		 * This method may be a little slow compared to the others, had'nt any better idea.
+		 * Does not work with negative numbers, yet.
+		 * @param lower the lower bound, inclusive.
+		 * @param higher the upper bound, exclusive.
+		 * @return a random BigNumber in range.
+		 */
+		static BigNumber randomBigNumberInRange(const BigNumber& lower, const BigNumber& higher) {
+			if (lower >= higher) {
+				throw new std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
+			}
+			if (!lower.m_positive || !higher.m_positive) {
+				throw new std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
+			}
+
+			std::random_device rand_gen;
+			std::mt19937 eng(rand_gen());
+			std::uniform_int_distribution<int> dist(lower.lenght(), higher.lenght());
+
+			BigNumber number = BigNumber::randomBigNumber(dist(eng));
+			while (number < lower || number >= higher) {
+				number = BigNumber::randomBigNumber(dist(eng));
+			}
+			return number;
 		}
 
 
@@ -332,6 +361,17 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief modPow power operation followed by module.
+		 * @param power the power wanted.
+		 * @param mod the module wanted.
+		 * @return this to the power power module mod.
+		 */
+		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const {
+			return this->pow(power) % mod;
+		}
+
+
 		/*
 		 * Assigment operators.
 		 */
@@ -535,6 +575,15 @@ class BigNumber {
 		 */
 		bool isOne() const {
 			return this->m_positive && this->m_values.size() == 1 && this->m_values[0] == 1;
+		}
+
+
+		/**
+		 * @brief isPositive methot that returns if this number is positive or not.
+		 * @return if this object has positive value or not.
+		 */
+		bool isPositive() const {
+			return this->m_positive;
 		}
 
 
