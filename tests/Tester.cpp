@@ -323,22 +323,39 @@ int main(int argc, char *argv[]) {
 			  true);
 
 
-	TF_ASSERT("AsLongLong 1",
-			  BigNumber(123456789).asLongLong() == 123456789,
+	TF_ASSERT("FitsInLongLong 1",
+			  BigNumber("-123456789").fitsInLongLong(),
 			  true);
 
-	TF_ASSERT("AsLongLong 2",
-			  BigNumber("-123456789").asLongLong() == -123456789,
+	TF_ASSERT("FitsInLongLong 2",
+			  BigNumber("922337203685477580").fitsInLongLong(),
 			  true);
+
+	TF_ASSERT("FitsInLongLong 3",
+			  BigNumber("9223372036854775807").fitsInLongLong(),
+			  false);
+
+	TF_ASSERT("FitsInLongLong 4",
+			  BigNumber("922337203685477580799").fitsInLongLong(),
+			  false);
+
+
+	TF_ASSERT("AsLongLong 1",
+			  BigNumber(123456789).asLongLong(),
+			  (long long) 123456789);
+
+	TF_ASSERT("AsLongLong 2",
+			  BigNumber("-123456789").asLongLong(),
+			  (long long) -123456789);
 
 
 	TF_ASSERT("Lenght 1",
-			  BigNumber("-123456789").lenght() == 9,
-			  true);
+			  BigNumber("-123456789").lenght(),
+			  (long long) 9);
 
 	TF_ASSERT("Lenght 2",
-			  BigNumber("00001").lenght() == 1,
-			  true);
+			  BigNumber("00001").lenght(),
+			  (long long) 1);
 
 
 	TF_ASSERT("Odd 1",

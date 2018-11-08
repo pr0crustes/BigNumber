@@ -304,13 +304,22 @@ class BigNumber {
 				return BigNumber(1);
 			}
 
-			BigNumber absoluteThis = this->absoluteValue();
-			BigNumber absoluteNumber = number.absoluteValue();
+			if (this->fitsInLongLong() && number.fitsInLongLong()) {  // this makes for huge optization.
+				return BigNumber(this->asLongLong() / number.asLongLong());
+			}
+
+			BigNumber absoluteThis = this->absoluteValue();  // this number will be modified.
+			const BigNumber absoluteNumber = number.absoluteValue();
 
 			BigNumber quotient;
-			while (absoluteThis >= absoluteNumber) {
-				quotient++;
-				absoluteThis -= absoluteNumber;
+
+			const int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
+			for (int i = lenghDifference; i >= 0; i--) {
+				BigNumber toSubtract = absoluteNumber.times10(i);
+				if (absoluteThis >= absoluteNumber) {
+					quotient += i + 1;
+					absoluteThis -= absoluteNumber;
+				}
 			}
 			quotient.m_positive = this->m_positive == number.m_positive;
 			quotient.afterOperation();
@@ -538,13 +547,23 @@ class BigNumber {
 		 * @param times how many times it shoud be multiplied by 10. Default is 1.
 		 * @return the number times 10 n times.
 		 */
-		BigNumber times10(int times = 1) {
+		BigNumber times10(int times = 1) const {
 			BigNumber temp = *this;
 			for (int i = 0; i < times; i++) {
 				temp.m_values.insert(temp.m_values.begin(), 0);
 			}
 			temp.afterOperation();
 			return temp;
+		}
+
+
+		/**
+		 * @brief fitsInLongLong method that calculates if a number fits in a long long type.
+		 * @return if number fits in long long type.
+		 * Uses the lenght to calculate, since long long max is 9223372036854775807.
+		 */
+		bool fitsInLongLong() const {
+			return this->lenght() < 19;
 		}
 
 
