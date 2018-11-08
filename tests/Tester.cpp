@@ -443,5 +443,4 @@ int main(int argc, char *argv[]) {
 
 
 	return TF::printResult();
-	return 0;
 }
