@@ -395,6 +395,15 @@ int main(int argc, char *argv[]) {
 			  BigNumber(-125));
 
 
+	TF_ASSERT("ModPow 1",
+			  BigNumber(5).modPow(10, 3),
+			  BigNumber(1));
+
+	TF_ASSERT("ModPow 2",
+			  BigNumber(522).modPow(7, 22),
+			  BigNumber(14));
+
+
 	TF_ASSERT("Random 1",
 			  BigNumber::randomBigNumber(100).lenght(),
 			  (long long) 100);
@@ -415,4 +424,5 @@ int main(int argc, char *argv[]) {
 
 
 	return TF::printResult();
+	return 0;
 }

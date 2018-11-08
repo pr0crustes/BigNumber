@@ -326,8 +326,10 @@ class BigNumber {
 			if (!this->m_positive || !number.m_positive) {
 				throw new std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
 			}
-			// Use division to calculate module. Since the division is rounded, it works.
-			BigNumber result = *this - (number * (*this / number));
+			BigNumber result = *this;
+			while (result >= number) {
+				result -= number;
+			}
 			result.afterOperation();
 			return result;
 		}
@@ -336,10 +338,11 @@ class BigNumber {
 		/**
 		 * @brief pow power method. Solves with Exponentiation by Squaring.
 		 * Throws an exception in case of 0 to the power of 0 and in case of any number to a negative one.
+		 * This function is slow with big numbers. If you want to apply a mod after, use modPow, since it is faster.
 		 * @param number the desired power.
 		 * @return THIS to the power of NUMBER.
 		 */
-		BigNumber pow(const BigNumber& number) const {
+		BigNumber pow(BigNumber number) const {
 			if (this->isZero() && number.isZero()) {
 				throw new std::invalid_argument("Zero to the power of Zero is undefined.");
 			}
@@ -352,7 +355,6 @@ class BigNumber {
 			if (number.isZero()) {
 				return BigNumber(1);
 			}
-
 			if (number.isOdd()) {
 				return *this * (*this * *this).pow((number - 1) / 2);
 			} else {
@@ -362,13 +364,27 @@ class BigNumber {
 
 
 		/**
-		 * @brief modPow power operation followed by module.
+		 * @brief modPow fast way of doing apower operation followed by module.
+		 * See https://en.wikipedia.org/wiki/Modular_exponentiation#Memory-efficient_method
 		 * @param power the power wanted.
 		 * @param mod the module wanted.
 		 * @return this to the power power module mod.
 		 */
 		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const {
-			return this->pow(power) % mod;
+			if (this->isZero() && power.isZero()) {
+				throw new std::invalid_argument("Zero to the power of Zero is undefined.");
+			}
+			if (power < BigNumber(0)) {
+				throw new std::invalid_argument("Power cannot be negative.");
+			}
+			if (this->isZero()) {
+				return BigNumber(0);
+			}
+			BigNumber result(1);
+			for (BigNumber i = 0; i < power; i++) {
+				result = (*this * result) % mod;
+			}
+			return result;
 		}
 
 
@@ -584,6 +600,36 @@ class BigNumber {
 		 */
 		bool isPositive() const {
 			return this->m_positive;
+		}
+
+
+		bool isProbablyPrime(int certainty) const {
+			if (!this->isPositive() || this->isOne() || !this->isOdd()) {
+				return false;
+			}
+			if (certainty <= 0) {
+				throw new std::invalid_argument("IsProbablyPrime certainty cannot be less or equal to 0.");
+			}
+
+			BigNumber thisMinusOne = *this - 1;
+			BigNumber s = thisMinusOne;  // copy
+			while (!s.isOdd()) {
+				s /= 2;
+			}
+
+			for (int i = 0; i < certainty; i++) {
+				BigNumber rand = BigNumber::randomBigNumberInRange(1, thisMinusOne);
+				BigNumber temp = s;
+				BigNumber mod = rand.modPow(temp, *this);
+				while (temp != thisMinusOne && !mod.isOne() && mod != thisMinusOne) {
+					mod = mod.modPow(mod, *this);
+					temp *= 2;
+				}
+				if (mod != thisMinusOne && !this->isOdd()) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 
