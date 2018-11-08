@@ -628,6 +628,14 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief isProbablyPrime implementation of Miller Rabin algorithm.
+		 * Tests if a BigNumber is PROBABLY prime.
+		 * Read https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
+		 * @param certainty how sure you want to be that the number is prime.
+		 * A bigger number will result in more computer time, but will reduce the amount of false-positive results.
+		 * @return if the number is PROBABLY prime. This is never 100% accurate.
+		 */
 		bool isProbablyPrime(int certainty) const {
 			if (!this->isPositive() || this->isOne() || !this->isOdd()) {
 				return false;
