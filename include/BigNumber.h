@@ -48,7 +48,7 @@ static int charToInt(char c) {
 
 /**
  * @brief The BigNumber class represents a limitless number.
- * Can hold values way larger than 2 to 64.
+ * Can hold and operate values way larger than 2 to 64.
  */
 class BigNumber {
 
@@ -65,18 +65,18 @@ class BigNumber {
 					this->m_positive = string.at(0) == '+';
 					string = string.substr(1);  // remove the signal.
 				}
-				for (int i = string.size() - 1; i >= 0; i--) {    // from end to start, so that string 321 is represented as vector {1, 2, 3}
+				for (int i = string.size() - 1; i >= 0; i--) {    // from end to start, so that string 321 is represented as vector {1, 2, 3}.
 					this->m_values.push_back(charToInt(string[i]));
 				}
 			} else {
-				this->m_values.push_back(0);
+				this->m_values.push_back(0);  // init with 0 by default.
 			}
 			this->removeLeftZeros();  // call removeLeftZeros, and not afterOperation since the object has not been completelly initialized.
 		}
 
 		BigNumber () : BigNumber("0") {}  // zero by default.
 
-		BigNumber(long long value) : BigNumber(std::to_string(value)) {}
+		BigNumber(long long value) : BigNumber(std::to_string(value)) {}  // just call the string constructor since its easier to parse.
 
 
 		/**
@@ -84,19 +84,19 @@ class BigNumber {
 		 * @param size the desired BigNumber size.
 		 * @return a random BigNumber with the desired number of digits.
 		 */
-		static BigNumber randomBigNumber(unsigned int size) {
-			if (size <= 0) {
+		static BigNumber randomBigNumber(int lenght) {
+			if (lenght <= 0) {
 				throw new std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
 			}
 
 			std::stringstream ss;
 			std::random_device rand_gen;
 
-			while (ss.tellp() < size) {
+			while (ss.tellp() < lenght) {  // add random digits until its larger than the desired lenght.
 				ss << rand_gen();
 			}
 
-			std::string randomDigits = ss.str().substr(0, size);
+			std::string randomDigits = ss.str().substr(0, lenght);  // cut the excess.
 			return BigNumber(randomDigits);
 		}
 
@@ -109,20 +109,20 @@ class BigNumber {
 		 * @param higher the upper bound, exclusive.
 		 * @return a random BigNumber in range.
 		 */
-		static BigNumber randomBigNumberInRange(const BigNumber& lower, const BigNumber& higher) {
-			if (lower >= higher) {
+		static BigNumber randomBigNumberInRange(const BigNumber& low, const BigNumber& hight) {
+			if (low >= hight) {
 				throw new std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
 			}
-			if (!lower.m_positive || !higher.m_positive) {
+			if (!low.m_positive || !hight.m_positive) {
 				throw new std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
 			}
 
 			std::random_device rand_gen;
 			std::mt19937 eng(rand_gen());
-			std::uniform_int_distribution<int> dist(lower.lenght(), higher.lenght());
+			std::uniform_int_distribution<int> dist(low.lenght(), hight.lenght());
 
 			BigNumber number = BigNumber::randomBigNumber(dist(eng));
-			while (number < lower || number >= higher) {
+			while (number < low || number >= hight) {
 				number = BigNumber::randomBigNumber(dist(eng));
 			}
 			return number;
@@ -193,12 +193,12 @@ class BigNumber {
 			// At this point, both signs are equal.
 			BigNumber result = *this;  // larger is not a pointer, since it will hold the result.
 
-			for (int i = 0; i < number.m_values.size(); i++) {
+			for (int i = 0; i < number.m_values.size(); i++) {  // the numbers will be iterated in normal order, units to hundreds.
 				int digit = number.m_values[i];
-				if (i < result.m_values.size()) {
-					result.m_values[i] += digit;
-				} else {  // no digit in this position, add to the end of vector.
-					result.m_values.push_back(digit);
+				if (i < result.m_values.size()) {  // if there is a digit at the same position in the other number.
+					result.m_values[i] += digit;  // sum to it.
+				} else {
+					result.m_values.push_back(digit);  // no digit in this position, add to the end of vector.
 				}
 
 #ifdef BIG_NUMBER_DEBUG
@@ -247,13 +247,14 @@ class BigNumber {
 				smaller = this;
 			}
 
-			for (int i = 0; i < smaller->m_values.size(); i++) {
+			for (int i = 0; i < smaller->m_values.size(); i++) {   // iterate in normal order, units to hundreds.
 				int dif = result.m_values[i] - smaller->m_values[i];
-				if (dif < 0) {
+				if (dif < 0) {  // subtraction cannot be done without borrowing.
+					// search for a number to borrow.
 					for (int j = i + 1; j < result.m_values.size(); j++) {
-						if (result.m_values[j] == 0) {
+						if (result.m_values[j] == 0) {  // replace 0's with 9 until finding a non-zero number.
 							result.m_values[j] = 9;
-						} else {
+						} else {  // subtract one from it and add 10 to the dif.
 							dif += 10;
 							result.m_values[j]--;
 							break;
@@ -281,9 +282,10 @@ class BigNumber {
 				for (int j = 0; j < this->m_values[i]; j++) {  // repeate m_values[i] times.
 					partialProduct += number.absoluteValue();
 				}
+				// Adds zero, one or more Zeros to the end so that the addition is done as in a multiplication.
 				product += partialProduct.times10(i);
 			}
-			product.m_positive = this->m_positive == number.m_positive;
+			product.m_positive = this->m_positive == number.m_positive;  // Multiplication signal rule.
 			product.afterOperation();
 			return product;
 		}
@@ -319,15 +321,18 @@ class BigNumber {
 
 			BigNumber quotient;
 
-			const int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
-			for (int i = lenghDifference; i >= 0; i--) {
-				BigNumber toSubtract = absoluteNumber.times10(i);
-				while (absoluteThis >= toSubtract) {
-					quotient += i + 1;
-					absoluteThis -= toSubtract;
+			// Iterate lenghtDifference times, decreasing.
+			int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
+			for (; lenghDifference >= 0; lenghDifference--) {
+				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
+				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
+				BigNumber toSubtract = absoluteNumber.times10(lenghDifference);
+				while (absoluteThis >= toSubtract) {  // if we can subtract it.
+					quotient += lenghDifference + 1;  // increase the quotient by the correct number.
+					absoluteThis -= toSubtract;  // subtract the numbers.
 				}
 			}
-			quotient.m_positive = this->m_positive == number.m_positive;
+			quotient.m_positive = this->m_positive == number.m_positive;  // Division signal rule.
 			quotient.afterOperation();
 			return quotient;
 		}
@@ -341,12 +346,15 @@ class BigNumber {
 			if (!this->m_positive || !number.m_positive) {
 				throw new std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
 			}
-			BigNumber result = *this;
+			BigNumber result = *this;  // makes a copy, since this will be the result.
 
-			const int lenghDifference = result.lenght() - number.lenght();
-			for (int i = lenghDifference; i >= 0; i--) {
-				BigNumber toSubtract = number.times10(i);
-				while (result >= toSubtract) {
+			// Iterate lenghtDifference times, decreasing.
+			int lenghDifference = result.lenght() - number.lenght();
+			for (; lenghDifference >= 0; lenghDifference--) {
+				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
+				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
+				BigNumber toSubtract = number.times10(lenghDifference);
+				while (result >= toSubtract) {  // if we can subtract, subtract it.
 					result -= toSubtract;
 				}
 			}
@@ -359,6 +367,7 @@ class BigNumber {
 		 * @brief pow power method. Solves with Exponentiation by Squaring.
 		 * Throws an exception in case of 0 to the power of 0 and in case of any number to a negative one.
 		 * This function is slow with big numbers. If you want to apply a mod after, use modPow, since it is faster.
+		 * See https://en.wikipedia.org/wiki/Exponentiation_by_squaring
 		 * @param number the desired power.
 		 * @return THIS to the power of NUMBER.
 		 */
@@ -401,7 +410,7 @@ class BigNumber {
 				return BigNumber(0);
 			}
 			BigNumber result(1);
-			for (BigNumber i = 0; i < power; i++) {
+			for (BigNumber i = 0; i < power; i++) {  // repeat power times.
 				result = (*this * result) % mod;
 			}
 			return result;
@@ -582,7 +591,7 @@ class BigNumber {
 		/**
 		 * @brief asLongLong returns a long long representation of this BigNumber object.
 		 * Throws exeption of type std::out_of_range if the number does not fit.
-		 * @return
+		 * @return this BigNumber as a long long, if possible.
 		 */
 		long long asLongLong() const {
 			return std::stoll(this->asString());
@@ -651,14 +660,14 @@ class BigNumber {
 			}
 
 			BigNumber thisMinusOne = *this - 1;
-			BigNumber s = thisMinusOne;  // copy
-			while (!s.isOdd()) {
-				s /= 2;
+			BigNumber oddCopy = thisMinusOne;  // copy
+			while (!oddCopy.isOdd()) {
+				oddCopy /= 2;
 			}
 
 			for (int i = 0; i < certainty; i++) {
 				BigNumber rand = BigNumber::randomBigNumberInRange(1, thisMinusOne);
-				BigNumber temp = s;
+				BigNumber temp = oddCopy;
 				BigNumber mod = rand.modPow(temp, *this);
 				while (temp != thisMinusOne && !mod.isOne() && mod != thisMinusOne) {
 					mod = mod.modPow(mod, *this);
@@ -684,7 +693,7 @@ class BigNumber {
 		void removeLeftZeros() {
 			for (int i = this->m_values.size() - 1; i >= 1; i--) {  // until 1, not 0 so that 0 is represented as {0} and not {}
 				if (this->m_values[i] == 0) {
-					this->m_values.pop_back();
+					this->m_values.pop_back();  // pops all zeroes to the left of the number.
 				} else {
 					break;
 				}
@@ -707,15 +716,15 @@ class BigNumber {
 		 * @brief carryOver method that carry over digits in addition, making sure no number in m_vector is bigger than 9.
 		 */
 		void carryOver() {
-			for (int i = 0; i < this->m_values.size(); i++) {
-				if (this->m_values[i] > 9) {
+			for (int i = 0; i < this->m_values.size(); i++) {  // iterate from units to hundreds.
+				if (this->m_values[i] > 9) {  // digits should only be in 0 to 9 range.
 					this->m_values[i] %= 10;
-					if (i + 1 < this->m_values.size()) {
-						this->m_values[i+1]++;
+					if (i + 1 < this->m_values.size()) {  // if there is a digit to the left.
+						this->m_values[i + 1]++;  // add one to it, it will be checked in the next iteration.
 					} else {
-						this->m_values.push_back(1);
+						this->m_values.push_back(1);  // push 1.
 					}
-					this->carryOver();
+					this->carryOver();  // verify again.
 					break;
 				}
 			}
