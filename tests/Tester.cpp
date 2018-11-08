@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[]) {
 
+//	TF::setIgnoreAllTests(true);
+
 	TF::setOnlyFail(true);
 
 	TF_ASSERT("Constructor 1",

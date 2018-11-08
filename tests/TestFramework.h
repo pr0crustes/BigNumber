@@ -12,6 +12,7 @@
 
 
 namespace _TF_IGNORE {  // Namespace for hidding stuff.
+	bool IGNORE_TESTS = false;
 	bool PRINT_ONLY_FAIL = false;  // If true, only erros should print.
 	int GLOBAL_ERROR_COUNT = 0;  // number of errors found.
 	int GLOBAL_TEST_COUNT = 0;  // number of tests runned.
@@ -39,6 +40,9 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 	 */
 	template<typename T>
 	void validate(T a, T b, std::string name, const char* file, int line) {
+		if (_TF_IGNORE::IGNORE_TESTS) {
+			return;
+		}
 		_TF_IGNORE::GLOBAL_TEST_COUNT++;
 		if (a == b) {
 			if (!_TF_IGNORE::PRINT_ONLY_FAIL) {
@@ -66,10 +70,22 @@ namespace TF {  // TF = TestFramework
 	}
 
 	/**
+	 * @brief setIgnoreAllTests sets if the tests should be skipped.
+	 * @param value a bool, if set to true, tests will not run.
+	 */
+	void setIgnoreAllTests(bool value) {
+		_TF_IGNORE::IGNORE_TESTS = value;
+	}
+
+	/**
 	 * @brief printResult function that does the printing of the results.
 	 * @return 0 if all tests passed, 1 otherwise.
 	 */
 	int printResult() {
+		if (_TF_IGNORE::IGNORE_TESTS) {
+			std::cout << "\n==> Ignored all tests\n";
+			return 0;
+		}
 		std::cout << _TF_IGNORE::GLOBAL_ASSERTIONS_SS.str() << std::endl;
 		if (_TF_IGNORE::GLOBAL_ERROR_COUNT > 0) {
 			std::cout << "\n==> " << _TF_IGNORE::GLOBAL_ERROR_COUNT << " of " << _TF_IGNORE::GLOBAL_TEST_COUNT << " tests failed.\n";
