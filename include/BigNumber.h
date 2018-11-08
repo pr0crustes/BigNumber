@@ -1,3 +1,9 @@
+/**
+ * BigNumber - a BigInt implementation in C++.
+ * This file is licensed under the MIT license.
+ * Do not remove this comment.
+ * 2018 @ pr0crustes
+ */
 #ifndef BIGNUMBER_H
 #define BIGNUMBER_H
 
