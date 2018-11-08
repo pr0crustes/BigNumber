@@ -20,7 +20,7 @@
  * @return the int contained in c. E.g. '0' returns 0.
  * Throws an exception if the char is not a number.
  */
-static int charToInt(char& c) {
+static int charToInt(char c) {
 	switch (c) {  // Since values are only 0-9, this is way faster than atoi.
 		case '0': return 0;
 		case '1': return 1;
@@ -469,6 +469,7 @@ class BigNumber {
 			if (this->m_values.size() != number.m_values.size()) {  // not the same lenght.
 				return this->m_values.size() < number.m_values.size();
 			}
+			// at this point, both are the same lenght.
 			if (this->m_positive) {  // both positives.
 				return this->asString() < number.asString();  // compare string representation.
 			}
