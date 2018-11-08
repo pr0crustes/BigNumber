@@ -617,6 +617,15 @@ class BigNumber {
 
 
 		/**
+		 * @brief isEven just a negative of isOdd.
+		 * @return if a number is even. Zero is considered even.
+		 */
+		bool isEven() const {
+			return !this->isOdd();
+		}
+
+
+		/**
 		 * @brief isZero methot that tests if a number is zero, faster than Number == BigNumber(0).
 		 * @return if the object is 0.
 		 */
