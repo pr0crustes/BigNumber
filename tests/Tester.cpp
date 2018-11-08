@@ -149,6 +149,14 @@ int main(int argc, char *argv[]) {
 			  BigNumber(100) / BigNumber(1),
 			  BigNumber(100));
 
+	TF_ASSERT("Div 6",
+			  BigNumber(300) / BigNumber(3),
+			  BigNumber(100));
+
+	TF_ASSERT("Div 7",
+			  BigNumber(700) / BigNumber(5),
+			  BigNumber(140));
+
 
 	TF_ASSERT("Mod 1",
 			  BigNumber(10) % BigNumber(3),
@@ -169,6 +177,10 @@ int main(int argc, char *argv[]) {
 	TF_ASSERT("Mod 5",
 			  BigNumber(460) % BigNumber(360),
 			  BigNumber(100));
+
+	TF_ASSERT("Mod 6",
+			  BigNumber(7655) % BigNumber(91),
+			  BigNumber(11));
 
 
 	TF_ASSERT("Times10 1",

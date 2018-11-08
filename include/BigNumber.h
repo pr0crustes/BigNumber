@@ -316,9 +316,9 @@ class BigNumber {
 			const int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
 			for (int i = lenghDifference; i >= 0; i--) {
 				BigNumber toSubtract = absoluteNumber.times10(i);
-				if (absoluteThis >= absoluteNumber) {
+				while (absoluteThis >= toSubtract) {
 					quotient += i + 1;
-					absoluteThis -= absoluteNumber;
+					absoluteThis -= toSubtract;
 				}
 			}
 			quotient.m_positive = this->m_positive == number.m_positive;
@@ -336,8 +336,13 @@ class BigNumber {
 				throw new std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
 			}
 			BigNumber result = *this;
-			while (result >= number) {
-				result -= number;
+
+			const int lenghDifference = result.lenght() - number.lenght();
+			for (int i = lenghDifference; i >= 0; i--) {
+				BigNumber toSubtract = number.times10(i);
+				while (result >= toSubtract) {
+					result -= toSubtract;
+				}
 			}
 			result.afterOperation();
 			return result;
