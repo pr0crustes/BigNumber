@@ -113,7 +113,7 @@ class BigNumber {
 			if (low >= hight) {
 				throw new std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
 			}
-			if (!low.m_positive || !hight.m_positive) {
+			if (!low.isPositive() || !hight.isPositive()) {
 				throw new std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
 			}
 
@@ -163,7 +163,7 @@ class BigNumber {
 		BigNumber operator-() const {
 			BigNumber number = *this;
 			if (!number.isZero()) {
-				number.m_positive = !number.m_positive;
+				number.m_positive = !number.isPositive();
 			}
 			return number;
 		}
@@ -178,9 +178,9 @@ class BigNumber {
 		 * @return the sum of both BigNumbers.
 		 */
 		BigNumber operator+(const BigNumber& number) const {
-			if (this->m_positive && !number.m_positive) {
+			if (this->isPositive() && !number.isPositive()) {
 				return *this - number.absoluteValue();
-			} else if (!this->m_positive && number.m_positive) {
+			} else if (!this->isPositive() && number.isPositive()) {
 				return -(number - this->absoluteValue());
 			}
 
@@ -221,9 +221,9 @@ class BigNumber {
 		 * @return the result of the subtraction
 		 */
 		BigNumber operator-(const BigNumber& number) const {
-			if (this->m_positive && !number.m_positive) {
+			if (this->isPositive() && !number.isPositive()) {
 				return *this + number.absoluteValue();
-			} else if (!this->m_positive && number.m_positive) {
+			} else if (!this->isPositive() && number.isPositive()) {
 				return -(number + this->absoluteValue());
 			}
 
@@ -285,7 +285,7 @@ class BigNumber {
 				// Adds zero, one or more Zeros to the end so that the addition is done as in a multiplication.
 				product += partialProduct.times10(i);
 			}
-			product.m_positive = this->m_positive == number.m_positive;  // Multiplication signal rule.
+			product.m_positive = this->isPositive() == number.isPositive();  // Multiplication signal rule.
 			product.afterOperation();
 			return product;
 		}
