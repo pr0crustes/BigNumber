@@ -34,12 +34,12 @@ depending where you put the file.
 ###### Instantiation
 It is possible to instantiate a BigNumber in multiple ways:  
 ```c++
-BigNumber A;  // will hond the value.
-BigNumber B(100);  // B will hond the value 100.
-BigNumber C(-50);  // C will hond the value -50.
-BigNumber D("-4561273837128312881");  // D will hond the value -4561273837128312881.
-BigNumber E = "4561273837";  // E will hond the value 4561273837
-BigNumber F = 2;  // F will hond the value 2.
+BigNumber A;  // will hold the value 0.
+BigNumber B(100);  // B will hold the value 100.
+BigNumber C(-50);  // C will hold the value -50.
+BigNumber D("-4561273837128312881");  // D will hold the value -4561273837128312881.
+BigNumber E = "4561273837";  // E will hold the value 4561273837
+BigNumber F = 2;  // F will hold the value 2.
 ```
 
 ###### Operators
