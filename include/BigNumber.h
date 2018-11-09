@@ -661,7 +661,7 @@ class BigNumber {
 		 * @return if the number is PROBABLY prime. This is never 100% accurate.
 		 */
 		bool isProbablyPrime(int certainty) const {
-			if (!this->isPositive() || this->isOne() || !this->isOdd()) {
+			if (!this->isPositive() || this->isOne() || this->isEven()) {
 				return false;
 			}
 			if (certainty <= 0) {
@@ -670,7 +670,7 @@ class BigNumber {
 
 			BigNumber thisMinusOne = *this - 1;
 			BigNumber oddCopy = thisMinusOne;  // copy
-			while (!oddCopy.isOdd()) {
+			while (oddCopy.isEven()) {
 				oddCopy /= 2;
 			}
 
@@ -682,7 +682,7 @@ class BigNumber {
 					mod = mod.modPow(mod, *this);
 					temp *= 2;
 				}
-				if (mod != thisMinusOne && !this->isOdd()) {
+				if (mod != thisMinusOne) {
 					return false;
 				}
 			}
