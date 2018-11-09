@@ -2,8 +2,6 @@
 
 #include "../include/BigNumber.h"
 
-#include <chrono>
-
 
 int main(int argc, char *argv[]) {
 
@@ -457,7 +455,6 @@ int main(int argc, char *argv[]) {
 	TF_ASSERT("Random in Range 2",
 			  BigNumber::randomBigNumberInRange(100, 1000) < 1000,
 			  true);
-
 
 
 	return TF::printResult();
