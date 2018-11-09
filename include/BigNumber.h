@@ -10,9 +10,9 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
 #include <random>
-
 #include <iostream>
 #include <stdexcept>
 
@@ -276,14 +276,21 @@ class BigNumber {
 		 * @return the result of the multiplication.
 		 */
 		BigNumber operator*(const BigNumber& number) const {
+			std::map<int, BigNumber> cachedProducts;  // the partials result will be cached, huge optimization.
+
+			BigNumber absoluteNumber = number.absoluteValue();
 			BigNumber product;
 			for (int i = 0; i < this->m_values.size(); i++) {
-				BigNumber partialProduct;
-				for (int j = 0; j < this->m_values[i]; j++) {  // repeate m_values[i] times.
-					partialProduct += number.absoluteValue();
+				int currentDigit = this->m_values[i];
+				if (!cachedProducts.count(currentDigit)) {  // if not in the map, calculates the partial product and insets to the map.
+					BigNumber partial;
+					for (int j = 0; j < currentDigit; j++) {  // repeate m_values[i] times.
+						partial += absoluteNumber;
+					}
+					cachedProducts.insert(std::make_pair(currentDigit, partial));
 				}
 				// Adds zero, one or more Zeros to the end so that the addition is done as in a multiplication.
-				product += partialProduct.times10(i);
+				product += cachedProducts.at(currentDigit).times10(i);
 			}
 			product.m_positive = this->isPositive() == number.isPositive();  // Multiplication signal rule.
 			product.afterOperation();

@@ -128,6 +128,10 @@ int main(int argc, char *argv[]) {
 			  BigNumber(-3111) * BigNumber(-2),
 			  BigNumber(6222));
 
+	TF_ASSERT("Mult 6",
+			  BigNumber(37) * BigNumber(76),
+			  BigNumber(2812));
+
 
 	TF_ASSERT("Div 1",
 			  BigNumber(1000) / BigNumber(10),
