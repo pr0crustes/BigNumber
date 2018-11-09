@@ -81,12 +81,13 @@ class BigNumber {
 
 		/**
 		 * @brief static method that generate random BigNumbers.
+		 * THIS IS A PSEUDO-RANDOM FUNCTION. DO NOT RELY IN IT BEING COMPLETELY RANDOM.
 		 * @param size the desired BigNumber size.
 		 * @return a random BigNumber with the desired number of digits.
 		 */
 		static BigNumber randomBigNumber(int lenght) {
 			if (lenght <= 0) {
-				throw new std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
+				throw std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
 			}
 
 			std::stringstream ss;
@@ -104,17 +105,18 @@ class BigNumber {
 		/**
 		 * @brief randomBigNumberInRange generate a random BigNumber in desired range, excluding higher.
 		 * This method may be a little slow compared to the others, had'nt any better idea.
-		 * Does not work with negative numbers, yet.
+		 * Does not work with negative numbers.
+		 * THIS IS A PSEUDO-RANDOM FUNCTION. DO NOT RELY IN IT BEING COMPLETELY RANDOM.
 		 * @param lower the lower bound, inclusive.
 		 * @param higher the upper bound, exclusive.
 		 * @return a random BigNumber in range.
 		 */
 		static BigNumber randomBigNumberInRange(const BigNumber& low, const BigNumber& hight) {
 			if (low >= hight) {
-				throw new std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
+				throw std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
 			}
 			if (!low.isPositive() || !hight.isPositive()) {
-				throw new std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
+				throw std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
 			}
 
 			std::random_device rand_gen;
@@ -307,7 +309,7 @@ class BigNumber {
 		 */
 		BigNumber operator/(const BigNumber& number) const {
 			if (number.isZero()) {
-				throw new std::invalid_argument("Division / Module by 0 is undefined.");
+				throw std::invalid_argument("Division / Module by 0 is undefined.");
 			}
 			if (number.isOne()) {
 				return *this;
@@ -351,7 +353,7 @@ class BigNumber {
 		 */
 		BigNumber operator%(const BigNumber& number) const {
 			if (!this->m_positive || !number.m_positive) {
-				throw new std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
+				throw std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
 			}
 			BigNumber result = *this;  // makes a copy, since this will be the result.
 
@@ -380,10 +382,10 @@ class BigNumber {
 		 */
 		BigNumber pow(BigNumber number) const {
 			if (this->isZero() && number.isZero()) {
-				throw new std::invalid_argument("Zero to the power of Zero is undefined.");
+				throw std::invalid_argument("Zero to the power of Zero is undefined.");
 			}
 			if (number < BigNumber(0)) {
-				throw new std::invalid_argument("Power cannot be negative, yet.");
+				throw std::invalid_argument("Power cannot be negative, yet.");
 			}
 			if (this->isZero()) {
 				return BigNumber(0);
@@ -407,11 +409,14 @@ class BigNumber {
 		 * @return this to the power power module mod.
 		 */
 		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const {
-			if (this->isZero() && power.isZero()) {
-				throw new std::invalid_argument("Zero to the power of Zero is undefined.");
+			if (mod.isZero()) {
+				throw std::invalid_argument("Module by Zero is undefined.");
 			}
-			if (power < BigNumber(0)) {
-				throw new std::invalid_argument("Power cannot be negative.");
+			if (this->isZero() && power.isZero()) {
+				throw std::invalid_argument("Zero to the power of Zero is undefined.");
+			}
+			if (!power.isPositive()) {
+				throw std::invalid_argument("Power cannot be negative.");
 			}
 			if (this->isZero()) {
 				return BigNumber(0);
@@ -656,44 +661,6 @@ class BigNumber {
 		 */
 		bool isPositive() const {
 			return this->m_positive;
-		}
-
-
-		/**
-		 * @brief isProbablyPrime implementation of Miller Rabin algorithm.
-		 * Tests if a BigNumber is PROBABLY prime.
-		 * Read https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
-		 * @param certainty how sure you want to be that the number is prime.
-		 * A bigger number will result in more computer time, but will reduce the amount of false-positive results.
-		 * @return if the number is PROBABLY prime. This is never 100% accurate.
-		 */
-		bool isProbablyPrime(int certainty) const {
-			if (!this->isPositive() || this->isOne() || this->isEven()) {
-				return false;
-			}
-			if (certainty <= 0) {
-				throw new std::invalid_argument("IsProbablyPrime certainty cannot be less or equal to 0.");
-			}
-
-			BigNumber thisMinusOne = *this - 1;
-			BigNumber oddCopy = thisMinusOne;  // copy
-			while (oddCopy.isEven()) {
-				oddCopy /= 2;
-			}
-
-			for (int i = 0; i < certainty; i++) {
-				BigNumber rand = BigNumber::randomBigNumberInRange(1, thisMinusOne);
-				BigNumber temp = oddCopy;
-				BigNumber mod = rand.modPow(temp, *this);
-				while (temp != thisMinusOne && !mod.isOne() && mod != thisMinusOne) {
-					mod = mod.modPow(mod, *this);
-					temp *= 2;
-				}
-				if (mod != thisMinusOne) {
-					return false;
-				}
-			}
-			return true;
 		}
 
 
