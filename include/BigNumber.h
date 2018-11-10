@@ -46,6 +46,7 @@ static int charToInt(char c) {
 }
 
 
+
 namespace pr0crustes {
 
 /**
@@ -196,7 +197,7 @@ class BigNumber {
 				return number;
 			}
 			// At this point, both signs are equal.
-			BigNumber result = *this;  // larger is not a pointer, since it will hold the result.
+			BigNumber result = *this;  // not a pointer, since it will hold the result.
 
 			for (int i = 0; i < number.m_values.size(); i++) {  // the numbers will be iterated in normal order, units to hundreds.
 				int digit = number.m_values[i];
@@ -213,7 +214,15 @@ class BigNumber {
 					throw std::invalid_argument(message);
 				}
 #endif
-				result.carryOver();
+				// Carry over.
+				if (result.m_values[i] > 9) {
+					result.m_values[i] %= 10;
+					if (i + 1 < result.m_values.size()) {  // if there is a digit to the left.
+						result.m_values[i + 1]++;  // add one to it, it will be checked in the next iteration.
+					} else {
+						result.m_values.push_back(1);  // push 1.
+					}
+				}
 			}
 			result.afterOperation();
 			return result;
@@ -694,25 +703,6 @@ class BigNumber {
 			this->removeLeftZeros();
 			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
-			}
-		}
-
-
-		/**
-		 * @brief carryOver method that carry over digits in addition, making sure no number in m_vector is bigger than 9.
-		 */
-		void carryOver() {
-			for (int i = 0; i < this->m_values.size(); i++) {  // iterate from units to hundreds.
-				if (this->m_values[i] > 9) {  // digits should only be in 0 to 9 range.
-					this->m_values[i] %= 10;
-					if (i + 1 < this->m_values.size()) {  // if there is a digit to the left.
-						this->m_values[i + 1]++;  // add one to it, it will be checked in the next iteration.
-					} else {
-						this->m_values.push_back(1);  // push 1.
-					}
-					this->carryOver();  // verify again.
-					break;
-				}
 			}
 		}
 
