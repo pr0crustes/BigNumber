@@ -2,6 +2,8 @@
 
 Overcome the integer limit.
 
+WARNING: This lib is a work in progress made by an amateur in C++, and is probably not production ready. It was created as a personal project, mainly as a learning experience. This project is here pubished just in case anyone find any use out of it, or maybe want to learn with it.  
+
 
 #### Contents
 
