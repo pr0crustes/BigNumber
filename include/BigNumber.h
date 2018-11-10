@@ -46,6 +46,8 @@ static int charToInt(char c) {
 }
 
 
+namespace pr0crustes {
+
 /**
  * @brief The BigNumber class represents a limitless number.
  * Can hold and operate values way larger than 2 to 64.
@@ -714,6 +716,8 @@ class BigNumber {
 		}
 
 };
+
+}  // Closing namespace pr0crustes.
 
 
 #endif // BIGNUMBER_H

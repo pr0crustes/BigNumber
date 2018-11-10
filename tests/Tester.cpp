@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[]) {
 
+	using pr0crustes::BigNumber;
+
 //	TF::setIgnoreAllTests(true);
 
 	TF::setOnlyFail(true);

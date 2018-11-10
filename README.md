@@ -32,6 +32,7 @@ or
 depending where you put the file.  
 
 #### Overview
+For simplicity reasons, this overview will use `using pr0crustes::BigNumber;`. If you prefer not to do so, you can access the BigNumber class as `pr0crustes::BigNumber`.  
 
 ###### Instantiation
 It is possible to instantiate a BigNumber in multiple ways:  
