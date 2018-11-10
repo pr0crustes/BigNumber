@@ -67,6 +67,7 @@ class BigNumber {
 					this->m_positive = string.at(0) == '+';
 					string = string.substr(1);  // remove the signal.
 				}
+				this->m_values.reserve(string.length());
 				for (int i = string.size() - 1; i >= 0; i--) {    // from end to start, so that string 321 is represented as vector {1, 2, 3}.
 					this->m_values.push_back(charToInt(string[i]));
 				}
