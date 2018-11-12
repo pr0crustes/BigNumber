@@ -290,6 +290,15 @@ class BigNumber {
 		 * @return the result of the multiplication.
 		 */
 		BigNumber operator*(const BigNumber& number) const {
+			if (this->isZero() || number.isZero()) {
+				return BigNumber(0);
+			}
+			if (this->isOne()) {
+				return number;
+			}
+			if(number.isOne()) {
+				return *this;
+			}
 			std::map<int, BigNumber> cachedProducts;  // the partials result will be cached, huge optimization.
 
 			BigNumber absoluteNumber = number.absoluteValue();
