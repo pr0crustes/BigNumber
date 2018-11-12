@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <chrono>
 
 
 namespace _TF_IGNORE {  // Namespace for hidding stuff.
@@ -108,6 +109,21 @@ namespace TF {  // TF = TestFramework
  * @param b the thing that a should be equal to.
  */
 #define TF_ASSERT(name, a, b) _TF_IGNORE::validate(a, b, name, __FILE__, __LINE__)
+
+
+/**
+ * @brief Convenient macro for timing some code execution.
+ * @param the line of code to be timed.
+ */
+#define TF_TIME_IT(code) \
+{ \
+	std::chrono::high_resolution_clock::time_point to = std::chrono::high_resolution_clock::now(); \
+	code; \
+	std::chrono::high_resolution_clock::time_point tf = std::chrono::high_resolution_clock::now(); \
+	double duration = std::chrono::duration_cast<std::chrono::microseconds>(tf - to).count(); \
+	double asSeconds = duration / 1000000; \
+	std::cout << "Execution of test at file \'" << __FILE__ "\' at line \'" << __LINE__ << "\' took: " << duration << " micro seconds, or " << asSeconds << " seconds." << std::endl; \
+}
 
 
 #endif // TESTFRAMEWORK_H
