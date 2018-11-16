@@ -462,17 +462,11 @@ int main(int argc, char *argv[]) {
 //			  BigNumber::randomBigNumberInRange(100, 1000) < 1000,
 //			  true);
 
-	TF_TIME_IT({
-		BigNumber a = BigNumber::randomBigNumber(100);
-		BigNumber b = BigNumber::randomBigNumber(100);
-		std::cout << a << std::endl << std::endl;
-		std::cout << b << std::endl << std::endl;
-		std::cout << (a + b) << std::endl << std::endl;
-		std::cout << (a - b) << std::endl << std::endl;
-		std::cout << (a * b) << std::endl << std::endl;
-		std::cout << (a / b) << std::endl << std::endl;
-		std::cout << (a % b) << std::endl << std::endl;
-	});
+//	TF_TIME_IT({
+	BigNumber a = BigNumber("-100");
+	std::string b = a.asBinary();
+	std::cout << a << "  |  " << b << std::endl;
+//	});
 
 
 

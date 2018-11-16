@@ -13,6 +13,7 @@
 #include <map>
 #include <sstream>
 #include <random>
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 
@@ -353,12 +354,12 @@ class BigNumber {
 
 			// Iterate lenghtDifference times, decreasing.
 			int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
-			for (; lenghDifference >= 0; lenghDifference--) {
+			while (lenghDifference-- >= 0) {
 				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
 				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
 				BigNumber toSubtract = absoluteNumber.times10(lenghDifference);
 				while (absoluteThis >= toSubtract) {  // if we can subtract it.
-					quotient += lenghDifference + 1;  // increase the quotient by the correct number.
+					quotient += BigNumber(1).times10(lenghDifference);  // increase the quotient by the correct number.
 					absoluteThis -= toSubtract;  // subtract the numbers.
 				}
 			}
@@ -608,6 +609,26 @@ class BigNumber {
 			}
 			temp.afterOperation();
 			return temp;
+		}
+
+
+		std::string asBinary() const {
+			std::stringstream ss;
+
+			BigNumber copy = this->absoluteValue();
+
+			while (copy > 0) {
+				ss << (copy.isOdd() ? '1' : '0');
+				std::cout << copy << " | divided by 2 is | ";
+				copy /= 2;
+				std::cout << copy << std::endl;
+			}
+
+			ss << (this->isPositive() ? '0' : '1');  // Big for signed.
+
+			std::string asString = ss.str();
+			std::reverse(asString.begin(), asString.end());
+			return asString;
 		}
 
 
