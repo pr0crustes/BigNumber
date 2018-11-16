@@ -612,6 +612,12 @@ class BigNumber {
 		}
 
 
+		/**
+		 * @brief asBinary returns a std::string representation of the BigNumber as binary.
+		 * The lenght of the string will always be the smallest necessary to fit the representation, plus the signed bit.
+		 * The representation is signed-like, so the first char is 1 if the number is negative, 0 if positive.
+		 * @return a std::string representation of the BigNumber as binary.
+		 */
 		std::string asBinary() const {
 			std::stringstream ss;
 
@@ -619,9 +625,7 @@ class BigNumber {
 
 			while (copy > 0) {
 				ss << (copy.isOdd() ? '1' : '0');
-				std::cout << copy << " | divided by 2 is | ";
 				copy /= 2;
-				std::cout << copy << std::endl;
 			}
 
 			ss << (this->isPositive() ? '0' : '1');  // Big for signed.
