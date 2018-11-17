@@ -83,6 +83,19 @@ class BigNumber {
 
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}  // just call the string constructor since its easier to parse.
 
+		static BigNumber fromBinary(std::string binary) {
+			BigNumber number(0);
+			number.m_positive = binary.at(0) == '0';
+
+			BigNumber powerTwo(1);
+			for (int i = binary.length() - 1; i > 0; i--) {  // i > 0 to ignore the signed bit.
+				if (binary.at(i) == '1') {
+					number += powerTwo;
+				}
+				powerTwo *= 2;
+			}
+			return number;
+		}
 
 		/**
 		 * @brief static method that generate random BigNumbers.
