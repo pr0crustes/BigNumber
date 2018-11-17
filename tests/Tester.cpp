@@ -138,6 +138,14 @@ int main(int argc, char *argv[]) {
 			  BigNumber(37) * BigNumber(76),
 			  BigNumber(2812));
 
+	TF_ASSERT("Mult 7",
+			  BigNumber("11111111111111111111111111111111") * BigNumber(3),
+			  BigNumber("33333333333333333333333333333333"));
+
+	TF_ASSERT("Mult 8",
+			  BigNumber("11111111111111111111111111111111") * BigNumber(100000),
+			  BigNumber("1111111111111111111111111111111100000"));
+
 
 	TF_ASSERT("Div 1",
 			  BigNumber(1000) / BigNumber(10),
@@ -485,6 +493,7 @@ int main(int argc, char *argv[]) {
 	TF_ASSERT("SplitAt 1",
 			  BigNumber("12323123129392841823845913213124133").splitAt(10).second,
 			  BigNumber("3213124133"));
+
 
 
 	return TF::printResult();
