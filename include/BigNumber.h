@@ -84,6 +84,12 @@ class BigNumber {
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}  // just call the string constructor since its easier to parse.
 
 
+		/**
+		 * @brief fromBinary instantiates a BigNumber from a binary string representation.
+		 * @param binary a binary like string. No checking is done to see if it is valid, any char other than 0 and 1 can lead to undefined behavior.
+		 * @param isSigned if true, as default, the first bit will be interpreted as the signal, like any signed integers.
+		 * @return a BigNumber with the value of the binary string.
+		 */
 		static BigNumber fromBinary(std::string binary, bool isSigned = true) {
 			BigNumber number(0);
 			if (isSigned) {
