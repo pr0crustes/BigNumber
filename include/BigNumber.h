@@ -407,7 +407,7 @@ class BigNumber {
 
 			// Iterate lenghtDifference times, decreasing.
 			int lenghDifference = result.lenght() - number.lenght();
-			for (; lenghDifference >= 0; lenghDifference--) {
+			while (lenghDifference-- >= 0) {
 				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
 				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
 				BigNumber toSubtract = number.times10(lenghDifference);
