@@ -12,9 +12,12 @@
 #include <chrono>
 
 
+/**
+ * If TF_PRINT_ONLY_FAIL is defined, only errors will be printed.
+ * If TF_IGNORE_TESTS is defined, all tests are skipped.
+ */
+
 namespace _TF_IGNORE {  // Namespace for hidding stuff.
-	bool IGNORE_TESTS = false;
-	bool PRINT_ONLY_FAIL = false;  // If true, only erros should print.
 	int GLOBAL_ERROR_COUNT = 0;  // number of errors found.
 	int GLOBAL_TEST_COUNT = 0;  // number of tests runned.
 	std::stringstream GLOBAL_ASSERTIONS_SS;  // stringstream, where the messages will be apended.
@@ -39,17 +42,14 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 	 * @param file the assertion file name.
 	 * @param line the assertion line number.
 	 */
-	template<typename T>
-	void validate(T a, T b, std::string name, const char* file, int line) {
-		if (_TF_IGNORE::IGNORE_TESTS) {
-			return;
-		}
+	template<typename T1, typename T2>
+	void validate(T1 a, T2 b, std::string name, const char* file, int line) {
 		_TF_IGNORE::GLOBAL_TEST_COUNT++;
 		if (a == b) {
-			if (!_TF_IGNORE::PRINT_ONLY_FAIL) {
-				_TF_IGNORE::addMessage(name, file, line);
-				_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Passed\n";
-			}
+#ifndef TF_PRINT_ONLY_FAIL
+			_TF_IGNORE::addMessage(name, file, line);
+			_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Passed\n";
+#endif
 		} else {
 			_TF_IGNORE::GLOBAL_ERROR_COUNT++;
 			_TF_IGNORE::addMessage(name, file, line);
@@ -60,44 +60,29 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 }
 
 
-namespace TF {  // TF = TestFramework
+/**
+ * @brief TF_EXIT_CODE true if tests failed, 0 if passed.
+ */
+#define TF_EXIT_CODE() (_TF_IGNORE::GLOBAL_ERROR_COUNT > 0)
 
-	/**
-	 * @brief setOnlyFail sets if should only print errors.
-	 * @param value a bool, if set to true, only errors will be printed.
-	 */
-	void setOnlyFail(bool value) {
-		_TF_IGNORE::PRINT_ONLY_FAIL = value;
-	}
 
-	/**
-	 * @brief setIgnoreAllTests sets if the tests should be skipped.
-	 * @param value a bool, if set to true, tests will not run.
-	 */
-	void setIgnoreAllTests(bool value) {
-		_TF_IGNORE::IGNORE_TESTS = value;
-	}
-
-	/**
-	 * @brief printResult function that does the printing of the results.
-	 * @return 0 if all tests passed, 1 otherwise.
-	 */
-	int printResult() {
-		if (_TF_IGNORE::IGNORE_TESTS) {
-			std::cout << "\n==> Ignored all tests\n";
-			return 0;
-		}
-		std::cout << _TF_IGNORE::GLOBAL_ASSERTIONS_SS.str() << std::endl;
-		if (_TF_IGNORE::GLOBAL_ERROR_COUNT > 0) {
-			std::cout << "\n==> " << _TF_IGNORE::GLOBAL_ERROR_COUNT << " of " << _TF_IGNORE::GLOBAL_TEST_COUNT << " tests failed.\n";
-			return 1;
-		} else {
-			std::cout << "\n==> All of " << _TF_IGNORE::GLOBAL_TEST_COUNT << " tests passed.\n";
-			return 0;
-		}
-	}
-
+/**
+ * @brief TF_PRINT_RESULT macro for printing the test result.
+ */
+#ifdef TF_IGNORE_TESTS
+#define TF_PRINT_RESULT() {std::cout << "\n==> Ignored all tests." << std::endl;}
+#else
+#define TF_PRINT_RESULT() \
+{ \
+	std::cout << _TF_IGNORE::GLOBAL_ASSERTIONS_SS.str() << std::endl; \
+	std::cout << "\n==> "; \
+	if (_TF_IGNORE::GLOBAL_ERROR_COUNT > 0) { \
+		std::cout << _TF_IGNORE::GLOBAL_ERROR_COUNT << " of " << _TF_IGNORE::GLOBAL_TEST_COUNT << " tests failed." << std::endl; \
+	} else { \
+		std::cout << "All of " << _TF_IGNORE::GLOBAL_TEST_COUNT << " tests passed." << std::endl; \
+	} \
 }
+#endif
 
 
 /**
@@ -108,17 +93,21 @@ namespace TF {  // TF = TestFramework
  * @param a the thing to be checked.
  * @param b the thing that a should be equal to.
  */
+#ifdef TF_IGNORE_TESTS
+#define TF_ASSERT(name, a, b)
+#else
 #define TF_ASSERT(name, a, b) _TF_IGNORE::validate(a, b, name, __FILE__, __LINE__)
+#endif
 
 
 /**
  * @brief Convenient macro for timing some code execution.
- * @param the line of code to be timed.
+ * @param the block of code to be timed.
  */
 #define TF_TIME_IT(code) \
 { \
 	std::chrono::high_resolution_clock::time_point to = std::chrono::high_resolution_clock::now(); \
-	code; \
+	{ code ; } \
 	std::chrono::high_resolution_clock::time_point tf = std::chrono::high_resolution_clock::now(); \
 	double duration = std::chrono::duration_cast<std::chrono::microseconds>(tf - to).count(); \
 	double asSeconds = duration / 1000000; \

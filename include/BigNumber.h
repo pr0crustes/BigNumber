@@ -18,7 +18,12 @@
 #include <stdexcept>
 
 
-//#define BIG_NUMBER_DEBUG   // Use a exclusive debug flag
+/**
+  * Use an exclusive Debug Flag.
+  * When defined, the lib will run slower,
+  * but will performe multiple checks to make everything is fine.
+  */
+#define BIG_NUMBER_DEBUG   // Use a exclusive debug flag
 
 
 /**
@@ -79,7 +84,7 @@ class BigNumber {
 			this->removeLeftZeros();  // call removeLeftZeros, and not afterOperation since the object has not been completelly initialized.
 		}
 
-		BigNumber () : BigNumber("0") {}  // zero by default.
+		BigNumber() : BigNumber("0") {}  // zero by default.
 
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}  // just call the string constructor since its easier to parse.
 
@@ -234,9 +239,8 @@ class BigNumber {
 
 #ifdef BIG_NUMBER_DEBUG
 				if (result.m_values[i] > 19) {
-					std::string message("Invalid value in m_value: ");
-					message.push_back(result.m_values[i]);
-					throw std::invalid_argument(message);
+					std::cerr << "Invalid value in m_value: " << result.m_values[i] << std::endl;
+					exit(1);
 				}
 #endif
 				// Carry over.
@@ -608,7 +612,8 @@ class BigNumber {
 			for (int i = this->m_values.size() - 1; i >= 0; i--) {  // reverse order, so that vector {1, 2, 3} prints 321 and not 123.
 #ifdef BIG_NUMBER_DEBUG
 				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
-					throw std::invalid_argument("m_values containing invalid value. Aborting...");
+					std::cerr << "m_values containing invalid value: " << this->m_values[i] << ". Aborting..."<< std::endl;
+					exit(1);
 				}
 #endif
 				ss << this->m_values[i];
@@ -827,6 +832,14 @@ class BigNumber {
 		 */
 		BigNumber(const std::vector<int> &vector) {
 			if (vector.size() > 0) {
+#ifdef BIG_NUMBER_DEBUG
+				for (int i = 0; i < vector.size(); i++) {
+					if (vector[i] < 0 || vector[i] > 9) {
+						std::cerr << "[BigNumber] {Vector Constructor} Invalid value in vector: " << vector[i] << std::endl;
+						exit(1);
+					}
+				}
+#endif
 				this->m_values = vector;
 			} else {
 				this->m_values.push_back(0);
