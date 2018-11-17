@@ -101,6 +101,7 @@ class BigNumber {
 			return number;
 		}
 
+
 		/**
 		 * @brief static method that generate random BigNumbers.
 		 * THIS IS A PSEUDO-RANDOM FUNCTION. DO NOT RELY IN IT BEING COMPLETELY RANDOM.
@@ -400,6 +401,7 @@ class BigNumber {
 			return quotient;
 		}
 
+
 		/**
 		 * @brief operator % module operator. This function does not work with negative numbers.
 		 * @param number the divisor number.
@@ -515,6 +517,7 @@ class BigNumber {
 			return *this;
 		}
 
+
 		/*
 		 * Increment / Decrement operators.
 		 */
@@ -539,6 +542,7 @@ class BigNumber {
 			*this -= 1;
 			return copy;
 		}
+
 
 		/*
 		 * Relational operators
@@ -599,6 +603,7 @@ class BigNumber {
 			return istream;
 		}
 
+
 		/**
 		 * @brief asString methot that creates a string representation of a BigNumber.
 		 * @return a string representing the BigNumber.
@@ -619,6 +624,7 @@ class BigNumber {
 			return ss.str();
 		}
 
+
 		/**
 		 * @brief absoluteValue gets the absolute value of a BigNumber,
 		 * @return a BigNumber copy, but positive, the absolute value.
@@ -628,6 +634,7 @@ class BigNumber {
 			temp.m_positive = true;
 			return temp;
 		}
+
 
 		/**
 		 * @brief times10 method that multiplies the number by 10, n times. Made to be fast.
@@ -642,6 +649,7 @@ class BigNumber {
 			temp.afterOperation();
 			return temp;
 		}
+
 
 		/**
 		 * @brief divide10 method that divides the number by 10, n times. Made to be fast.
@@ -806,6 +814,7 @@ class BigNumber {
 			}
 		}
 
+
 		/**
 		 * @brief afterOperation just a method that updates internal stuff,
 		 * should be called after most internal value update operations.
@@ -816,6 +825,7 @@ class BigNumber {
 				this->m_positive = true;
 			}
 		}
+
 
 		/**
 		 * @brief BigNumber this is a private constructor just to copy the vector.
