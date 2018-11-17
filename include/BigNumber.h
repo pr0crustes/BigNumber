@@ -325,39 +325,49 @@ class BigNumber {
 				return *this;
 			}
 
-//			int maxLen = std::max(this->lenght(), number.lenght());
-
-//			if (maxLen == 1) {
-//				BigNumber product = this->m_values[0] * number.m_values[0];
-//				product.m_positive = this->isPositive() == number.isPositive();
-//				return product;
-//			}
-
-//			if (maxLen & 1) {  // is odd.
-//				maxLen++;
-//			}
-
-//			int splitPoint = maxLen / 2;
-
-			std::map<int, BigNumber> cachedProducts;  // the partials result will be cached, huge optimization.
-
-			BigNumber absoluteNumber = number.absoluteValue();
-			BigNumber product;
-			for (int i = 0; i < this->m_values.size(); i++) {
-				int currentDigit = this->m_values[i];
-				if (!cachedProducts.count(currentDigit)) {  // if not in the map, calculates the partial product and insets to the map.
-					BigNumber partial;
-					for (int j = 0; j < currentDigit; j++) {  // repeate m_values[i] times.
-						partial += absoluteNumber;
-					}
-					cachedProducts.insert(std::make_pair(currentDigit, partial));
-				}
-				// Adds zero, one or more Zeros to the end so that the addition is done as in a multiplication.
-				product += cachedProducts.at(currentDigit).times10(i);
+			if (this->lenght() < 10 && number.lenght() < 10) {
+				return BigNumber(this->asLongLong() * number.asLongLong());
 			}
-			product.m_positive = this->isPositive() == number.isPositive();  // Multiplication signal rule.
-			product.afterOperation();
-			return product;
+
+			int maxLen = std::max(this->lenght(), number.lenght());
+
+			if (maxLen & 1) {  // is odd.
+				maxLen++;
+			}
+
+			int splitPoint = maxLen / 2;
+
+			std::pair<BigNumber, BigNumber> splitThis = this->splitAt(splitPoint);
+			std::pair<BigNumber, BigNumber> splitNumber = number.splitAt(splitPoint);
+
+			BigNumber firstProduct = splitThis.first * splitNumber.first;
+			BigNumber secondProduct = splitThis.second * splitNumber.second;
+			BigNumber sumProduct = (splitThis.first + splitThis.second) * (splitNumber.first + splitNumber.second);
+
+			BigNumber delta = sumProduct - firstProduct - secondProduct;
+
+			return (secondProduct * BigNumber(1).times10(splitPoint * 2)) + (delta * BigNumber(1).times10(splitPoint)) + firstProduct;
+
+
+//			std::map<int, BigNumber> cachedProducts;  // the partials result will be cached, huge optimization.
+
+//			BigNumber absoluteNumber = number.absoluteValue();
+//			BigNumber product;
+//			for (int i = 0; i < this->m_values.size(); i++) {
+//				int currentDigit = this->m_values[i];
+//				if (!cachedProducts.count(currentDigit)) {  // if not in the map, calculates the partial product and insets to the map.
+//					BigNumber partial;
+//					for (int j = 0; j < currentDigit; j++) {  // repeate m_values[i] times.
+//						partial += absoluteNumber;
+//					}
+//					cachedProducts.insert(std::make_pair(currentDigit, partial));
+//				}
+//				// Adds zero, one or more Zeros to the end so that the addition is done as in a multiplication.
+//				product += cachedProducts.at(currentDigit).times10(i);
+//			}
+//			product.m_positive = this->isPositive() == number.isPositive();  // Multiplication signal rule.
+//			product.afterOperation();
+//			return product;
 		}
 
 
