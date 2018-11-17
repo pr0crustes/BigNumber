@@ -313,6 +313,21 @@ class BigNumber {
 			if(number.isOne()) {
 				return *this;
 			}
+
+//			int maxLen = std::max(this->lenght(), number.lenght());
+
+//			if (maxLen == 1) {
+//				BigNumber product = this->m_values[0] * number.m_values[0];
+//				product.m_positive = this->isPositive() == number.isPositive();
+//				return product;
+//			}
+
+//			if (maxLen & 1) {  // is odd.
+//				maxLen++;
+//			}
+
+//			int splitPoint = maxLen / 2;
+
 			std::map<int, BigNumber> cachedProducts;  // the partials result will be cached, huge optimization.
 
 			BigNumber absoluteNumber = number.absoluteValue();
@@ -622,6 +637,22 @@ class BigNumber {
 			}
 			temp.afterOperation();
 			return temp;
+		}
+
+		/**
+		 * @brief divide10 method that divides the number by 10, n times. Made to be fast.
+		 * @param times how many times it shoud be divided by 10. Default is 1.
+		 * @return the number divided by 10 n times.
+		 */
+		BigNumber divide10(int times = 1) const {
+			if (this->lenght() - times < 1) {
+				return BigNumber(0);
+			}
+			BigNumber divided = *this;
+			for (int i = 0; i < times; i++) {
+				divided.m_values.erase(divided.m_values.begin());
+			}
+			return divided;
 		}
 
 

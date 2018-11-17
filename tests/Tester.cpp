@@ -210,6 +210,11 @@ int main(int argc, char *argv[]) {
 			  BigNumber(10000000));
 
 
+	TF_ASSERT("Divide10 4",
+			  BigNumber(56088).divide10(2),
+			  BigNumber(560));
+
+
 	TF_ASSERT("Comp > 1",
 			  BigNumber(1000) > BigNumber(2),
 			  true);
