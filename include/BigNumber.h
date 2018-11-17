@@ -83,12 +83,16 @@ class BigNumber {
 
 		BigNumber(long long value) : BigNumber(std::to_string(value)) {}  // just call the string constructor since its easier to parse.
 
-		static BigNumber fromBinary(std::string binary) {
+
+		static BigNumber fromBinary(std::string binary, bool isSigned = true) {
 			BigNumber number(0);
-			number.m_positive = binary.at(0) == '0';
+			if (isSigned) {
+				number.m_positive = binary.at(0) == '0';
+				binary = binary.substr(1);
+			}
 
 			BigNumber powerTwo(1);
-			for (int i = binary.length() - 1; i > 0; i--) {  // i > 0 to ignore the signed bit.
+			for (int i = binary.length() - 1; i >= 0; i--) {
 				if (binary.at(i) == '1') {
 					number += powerTwo;
 				}
@@ -680,6 +684,12 @@ class BigNumber {
 		}
 
 
+		std::pair<BigNumber, BigNumber> splitAt(int splitPos) const {
+
+			return std::make_pair(0, 0);
+		}
+
+
 		/**
 		 * @brief fitsInLongLong method that calculates if a number fits in a long long type.
 		 * @return if number fits in long long type.
@@ -781,6 +791,20 @@ class BigNumber {
 			this->removeLeftZeros();
 			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
+			}
+		}
+
+		/**
+		 * @brief BigNumber this is a private constructor just to copy the vector.
+		 * No checking is done to see if the vector is valid or not.
+		 * An empty vector will result in the object being init with 0.
+		 * @param vector the object m_values.
+		 */
+		BigNumber(const std::vector<int> &vector) {
+			if (vector.size() > 0) {
+				this->m_values = vector;
+			} else {
+				this->m_values.push_back(0);
 			}
 		}
 
