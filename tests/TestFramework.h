@@ -53,7 +53,7 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 		} else {
 			_TF_IGNORE::GLOBAL_ERROR_COUNT++;
 			_TF_IGNORE::addMessage(name, file, line);
-			_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Failed: Expected \'" << a << "\' received \'" << b << "\'\n";
+			_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Failed: Expected \'" << b << "\' received \'" << a << "\'\n";
 		}
 	}
 
