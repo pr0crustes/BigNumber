@@ -684,9 +684,32 @@ class BigNumber {
 		}
 
 
-		std::pair<BigNumber, BigNumber> splitAt(int splitPos) const {
+		/**
+		 * @brief splitAt splits a BigNumber at a desired position.
+		 * @param splitPos the position to be split at.
+		 * Keep in mind that this position is from right to left, so spliting the number 123456 at pos 1 will result in 12345 and 6.
+		 * If the param is not in range [0, this.lenght], it will be capped to it.
+		 * @return a pair of the result BigNumbers.
+		 */
+		std::pair<BigNumber, BigNumber> splitAt(long long splitPos) const {
+			splitPos = std::min(std::max(splitPos, (long long) 0), this->lenght());  // cap values to [0, lengh]. I miss C++ 17 clamp.
 
-			return std::make_pair(0, 0);
+			std::vector<int> firstHalf;
+			firstHalf.reserve(splitPos);
+
+			std::vector<int> secondHalf;
+			secondHalf.reserve(this->lenght() - splitPos);
+
+			for (long long i = 0; i < this->lenght(); i++) {
+				int digit = this->m_values[i];
+				if (i > splitPos - 1) {
+					firstHalf.push_back(digit);
+				} else {
+					secondHalf.push_back(digit);
+				}
+			}
+
+			return std::make_pair(BigNumber(firstHalf), BigNumber(secondHalf));
 		}
 
 

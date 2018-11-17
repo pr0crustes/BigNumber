@@ -482,5 +482,10 @@ int main(int argc, char *argv[]) {
 			  BigNumber(154));
 
 
+	TF_ASSERT("SplitAt 1",
+			  BigNumber("12323123129392841823845913213124133").splitAt(10).second,
+			  BigNumber("3213124133"));
+
+
 	return TF::printResult();
 }
