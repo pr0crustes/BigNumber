@@ -35,6 +35,20 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 
 
 	/**
+	 * @brief addPassedMessage logs that a test passed.
+	 * @param name the assertion name.
+	 * @param file the assertion file name.
+	 * @param line the assertion line number.
+	 */
+	void addPassedMessage(std::string name, const char* file, int line) {
+#ifndef TF_PRINT_ONLY_FAIL
+		_TF_IGNORE::addMessage(name, file, line);
+		_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Passed\n";
+#endif
+	}
+
+
+	/**
 	 * @brief validate checks if a == b, appendind to assertions if necessary.
 	 * @param a the thing to be check.
 	 * @param b the thing that a should be equal to.
@@ -46,10 +60,7 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 	void validate(T1 a, T2 b, std::string name, const char* file, int line) {
 		_TF_IGNORE::GLOBAL_TEST_COUNT++;
 		if (a == b) {
-#ifndef TF_PRINT_ONLY_FAIL
-			_TF_IGNORE::addMessage(name, file, line);
-			_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Passed\n";
-#endif
+			_TF_IGNORE::addPassedMessage(name, file, line);
 		} else {
 			_TF_IGNORE::GLOBAL_ERROR_COUNT++;
 			_TF_IGNORE::addMessage(name, file, line);
@@ -97,6 +108,29 @@ namespace _TF_IGNORE {  // Namespace for hidding stuff.
 #define TF_ASSERT(name, a, b)
 #else
 #define TF_ASSERT(name, a, b) _TF_IGNORE::validate(a, b, name, __FILE__, __LINE__)
+#endif
+
+
+/**
+ * @brief TF_THROW macro that runs a test tha only pass in case of an exception.
+ * @param name the assertion name.
+ * @param code the code to be checked.
+ */
+#ifdef TF_IGNORE_TESTS
+#define TF_THROW(name, code)
+#else
+#define TF_THROW(name, code) \
+{ \
+	_TF_IGNORE::GLOBAL_TEST_COUNT++; \
+	try { \
+		{ code ; } \
+		_TF_IGNORE::GLOBAL_ERROR_COUNT++; \
+		_TF_IGNORE::addMessage(name, __FILE__, __LINE__); \
+		_TF_IGNORE::GLOBAL_ASSERTIONS_SS << "Failed: No exception occurred.\n"; \
+	} catch (...) { \
+		_TF_IGNORE::addPassedMessage(name, __FILE__, __LINE__); \
+	} \
+}
 #endif
 
 
