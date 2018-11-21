@@ -337,6 +337,7 @@ class BigNumber {
 			int maxLenght = std::max(this->lenght(), number.lenght());
 			int splitPoint = maxLenght / 2;  // round down.
 
+			// Apply the Karatsuba algorithm, you should read about it before reading this code.
 			std::pair<BigNumber, BigNumber> splitThis = this->splitAt(splitPoint);
 			std::pair<BigNumber, BigNumber> splitNumber = number.splitAt(splitPoint);
 
