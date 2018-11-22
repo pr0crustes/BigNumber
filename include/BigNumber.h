@@ -360,42 +360,7 @@ class BigNumber {
 		 * @return result of division.
 		 */
 		BigNumber operator/(const BigNumber& number) const {
-			if (number.isZero()) {
-				throw std::invalid_argument("Division / Module by 0 is undefined.");
-			}
-			if (number.isOne()) {
-				return *this;
-			}
-			if (number > *this) {
-				return BigNumber(0);
-			}
-			if (number == *this) {
-				return BigNumber(1);
-			}
-
-			if (this->fitsInLongLong() && number.fitsInLongLong()) {  // this makes for huge optization.
-				return BigNumber(this->asLongLong() / number.asLongLong());
-			}
-
-			BigNumber absoluteThis = this->absoluteValue();  // this number will be modified.
-			const BigNumber absoluteNumber = number.absoluteValue();
-
-			BigNumber quotient;
-
-			// Iterate lenghtDifference times, decreasing.
-			int lenghDifference = absoluteThis.lenght() - absoluteNumber.lenght();
-			while (lenghDifference-- >= 0) {
-				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
-				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
-				BigNumber toSubtract = absoluteNumber.times10(lenghDifference);
-				while (absoluteThis >= toSubtract) {  // if we can subtract it.
-					quotient += BigNumber(1).times10(lenghDifference);  // increase the quotient by the correct number.
-					absoluteThis -= toSubtract;  // subtract the numbers.
-				}
-			}
-			quotient.m_positive = this->m_positive == number.m_positive;  // Division signal rule.
-			quotient.afterOperation();
-			return quotient;
+			return this->divide(number).first;
 		}
 
 
@@ -405,23 +370,7 @@ class BigNumber {
 		 * @return the result of the module operator.
 		 */
 		BigNumber operator%(const BigNumber& number) const {
-			if (!this->m_positive || !number.m_positive) {
-				throw std::invalid_argument("Operator % cannot be used with negative numbers. Perhaps you forgot to call `absoluteValue()`?");
-			}
-			BigNumber result = *this;  // makes a copy, since this will be the result.
-
-			// Iterate lenghtDifference times, decreasing.
-			int lenghDifference = result.lenght() - number.lenght();
-			while (lenghDifference-- >= 0) {
-				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
-				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
-				BigNumber toSubtract = number.times10(lenghDifference);
-				while (result >= toSubtract) {  // if we can subtract, subtract it.
-					result -= toSubtract;
-				}
-			}
-			result.afterOperation();
-			return result;
+			return this->divide(number).second;
 		}
 
 
@@ -822,6 +771,52 @@ class BigNumber {
 			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
 			}
+		}
+
+
+		/**
+		 * @brief divide method that contains the division logid.
+		 * @param number to divide by.
+		 * @return a pair, the first one is the division quocient, the second the division rest.
+		 * The division rest is ALWAYS positive, since ISO14882:2011 says that the sign of the remainder is implementation-defined.
+		 */
+		std::pair<BigNumber, BigNumber> divide(const BigNumber& number) const {
+			if (number.isZero()) {
+				throw std::invalid_argument("Division | Module by 0 is undefined.");
+			}
+			if (number.isOne()) {
+				return std::make_pair(*this, BigNumber(0));
+			}
+			if (number == *this) {
+				return std::make_pair(BigNumber(1), BigNumber(0));
+			}
+
+			if (this->fitsInLongLong() && number.fitsInLongLong()) {  // this makes for huge optization.
+				long long llThis = this->asLongLong();
+				long long llNumber = number.asLongLong();
+				return std::make_pair(BigNumber(llThis / llNumber), BigNumber(abs(llThis % llNumber)));
+			}
+
+			BigNumber rest = this->absoluteValue();  // this number will be modified.
+			const BigNumber absoluteNumber = number.absoluteValue();
+
+			BigNumber quotient;
+
+			// Iterate lenghtDifference times, decreasing.
+			int lenghDifference = rest.lenght() - absoluteNumber.lenght();
+			while (lenghDifference-- >= 0) {
+				// The number that it will try to subtract will be the absoluteNumber passed times 10 to the power of the current lenghDiff.
+				// This will make for HUGE permorface, since instead of subtracting 2 from 200 100 times it will subtract 200 from 200 once.
+				BigNumber toSubtract = absoluteNumber.times10(lenghDifference);
+				while (rest >= toSubtract) {  // if we can subtract it.
+					quotient += BigNumber(1).times10(lenghDifference);  // increase the quotient by the correct number.
+					rest -= toSubtract;  // subtract the numbers.
+				}
+			}
+			quotient.m_positive = this->m_positive == number.m_positive;  // Division signal rule.
+			quotient.afterOperation();
+			rest.afterOperation();
+			return std::make_pair(quotient, rest);
 		}
 
 
