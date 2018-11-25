@@ -742,7 +742,7 @@ class BigNumber {
 		}
 
 
-	private:
+//	private:
 
 		bool m_positive = true;  // positive by default.
 		std::vector<int> m_values;  // vector that will hold the digts. vector {1, 2, 3} means number 321.
@@ -790,6 +790,10 @@ class BigNumber {
 			if (number == *this) {
 				return std::make_pair(BigNumber(1), BigNumber(0));
 			}
+			if (number > *this) {
+				return std::make_pair(BigNumber(0), *this);
+			}
+			// At this point, we can assume *this is larger than number.
 
 			if (this->fitsInLongLong() && number.fitsInLongLong()) {  // this makes for huge optization.
 				long long llThis = this->asLongLong();
@@ -825,8 +829,9 @@ class BigNumber {
 		 * No checking is done to see if the vector is valid or not.
 		 * An empty vector will result in the object being init with 0.
 		 * @param vector the object m_values.
+		 * @param reversed if true, the vector will be read in the reverse order.
 		 */
-		BigNumber(const std::vector<int> &vector) {
+		BigNumber(const std::vector<int> &vector, bool reversed=false) {
 			if (vector.size() > 0) {
 #ifdef BIG_NUMBER_DEBUG
 				for (int i = 0; i < vector.size(); i++) {
@@ -836,7 +841,11 @@ class BigNumber {
 					}
 				}
 #endif
+
 				this->m_values = vector;
+				if (reversed) {
+					std::reverse(this->m_values.begin(), this->m_values.end());
+				}
 			} else {
 				this->m_values.push_back(0);
 			}
