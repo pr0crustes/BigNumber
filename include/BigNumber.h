@@ -23,7 +23,7 @@
   * When defined, the lib will run slower,
   * but will performe multiple checks to make everything is fine.
   */
-#define BIG_NUMBER_DEBUG   // Use a exclusive debug flag
+//#define BIG_NUMBER_DEBUG   // Use a exclusive debug flag
 
 
 /**
