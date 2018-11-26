@@ -686,7 +686,13 @@ class BigNumber {
 		 * Throws exeption of type std::out_of_range if the number does not fit.
 		 * @return this BigNumber as a long long, if possible.
 		 */
-		long long asLongLong() const noexcept(true) {
+		long long asLongLong() const noexcept(false) {
+#ifdef BIG_NUMBER_DEBUG
+			if (!this->fitsInLongLong()) {
+				std::cerr << "[BigNumber] {As Long Long} Invalid long long:" << *this << std::endl;
+				exit(1);
+			}
+#endif
 			return std::stoll(this->asString());
 		}
 
