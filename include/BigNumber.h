@@ -650,7 +650,7 @@ class BigNumber {
 		 * @return a pair of the result BigNumbers.
 		 */
 		std::pair<BigNumber, BigNumber> splitAt(long long splitPos) const noexcept(true) {
-			splitPos = std::min(std::max(splitPos, (long long) 0), this->lenght());  // cap values to [0, lengh]. I miss C++ 17 clamp.
+			splitPos = std::min(std::max(splitPos, (long long) 0), (long long) this->lenght());  // cap values to [0, lengh]. I miss C++ 17 clamp.
 
 			std::vector<int> firstHalf;
 			firstHalf.reserve(splitPos);
@@ -658,7 +658,7 @@ class BigNumber {
 			std::vector<int> secondHalf;
 			secondHalf.reserve(this->lenght() - splitPos);
 
-			for (long long i = 0; i < this->lenght(); i++) {
+			for (size_t i = 0; i < this->lenght(); i++) {
 				int digit = this->m_values[i];
 				if (i > splitPos - 1) {
 					firstHalf.push_back(digit);
@@ -695,7 +695,7 @@ class BigNumber {
 		 * @brief lenght method to get the lenght of given number, counting the digits.
 		 * @return the lenght of this BigNumber.
 		 */
-		long long lenght() const noexcept(true) {
+		size_t lenght() const noexcept(true) {
 			return this->m_values.size();
 		}
 
