@@ -472,16 +472,19 @@ class BigNumber {
 			return *this;
 		}
 
+
 		BigNumber& operator--() {
 			*this -= 1;
 			return *this;
 		}
+
 
 		BigNumber operator++(int) {
 			BigNumber copy = *this;
 			*this += 1;
 			return copy;
 		}
+
 
 		BigNumber operator--(int) {
 			BigNumber copy = *this;
@@ -742,10 +745,11 @@ class BigNumber {
 		}
 
 
-//	private:
+	private:
 
 		bool m_positive = true;  // positive by default.
 		std::vector<int> m_values;  // vector that will hold the digts. vector {1, 2, 3} means number 321.
+
 
 		/**
 		 * @brief removeLeftZeros removes all the zeroes to the left of a number,
