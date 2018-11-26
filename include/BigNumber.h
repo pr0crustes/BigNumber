@@ -32,7 +32,7 @@
  * @return the int contained in c. E.g. '0' returns 0.
  * Throws an exception if the char is not a number.
  */
-static int charToInt(char c) {
+static int charToInt(char c) noexcept(false) {
 	switch (c) {  // Since values are only 0-9, this is way faster than atoi.
 		case '0': return 0;
 		case '1': return 1;
@@ -68,7 +68,7 @@ class BigNumber {
 		 * BigNumber has 0 as default value.
 		 * Can be instantiated with the value of a string or long long.
 		 */
-		BigNumber(std::string string) {
+		BigNumber(std::string string) noexcept(false) {
 			if (string.length() > 0) {
 				if (string.at(0) == '-' || string.at(0) == '+') {
 					this->m_positive = string.at(0) == '+';
@@ -95,7 +95,7 @@ class BigNumber {
 		 * @param isSigned if true, as default, the first bit will be interpreted as the signal, like any signed integers.
 		 * @return a BigNumber with the value of the binary string.
 		 */
-		static BigNumber fromBinary(std::string binary, bool isSigned = true) {
+		static BigNumber fromBinary(std::string binary, bool isSigned = true) noexcept(true) {
 			BigNumber number(0);
 			if (isSigned) {
 				number.m_positive = binary.at(0) == '0';
@@ -119,7 +119,7 @@ class BigNumber {
 		 * @param size the desired BigNumber size.
 		 * @return a random BigNumber with the desired number of digits.
 		 */
-		static BigNumber randomBigNumber(int lenght) {
+		static BigNumber randomBigNumber(int lenght) noexcept(false) {
 			if (lenght <= 0) {
 				throw std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
 			}
@@ -145,7 +145,7 @@ class BigNumber {
 		 * @param higher the upper bound, exclusive.
 		 * @return a random BigNumber in range.
 		 */
-		static BigNumber randomBigNumberInRange(const BigNumber& low, const BigNumber& hight) {
+		static BigNumber randomBigNumberInRange(const BigNumber& low, const BigNumber& hight) noexcept(false) {
 			if (low >= hight) {
 				throw std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
 			}
@@ -173,7 +173,7 @@ class BigNumber {
 		 * @param number
 		 * @return
 		 */
-		BigNumber& operator=(const BigNumber& number) {
+		BigNumber& operator=(const BigNumber& number) noexcept(true) {
 			this->m_values = number.m_values;
 			this->m_positive = number.m_positive;
 			return *this;
@@ -187,7 +187,7 @@ class BigNumber {
 		 * @brief operator + This does NOT return the absolute value.
 		 * @return the BigNumber itself.
 		 */
-		BigNumber operator+() const {
+		BigNumber operator+() const noexcept(true) {
 			return *this;
 		}
 
@@ -196,7 +196,7 @@ class BigNumber {
 		 * @brief operator - the same as multiplying by -1.
 		 * @return returns the bignumber with reverted signal.
 		 */
-		BigNumber operator-() const {
+		BigNumber operator-() const noexcept(true) {
 			BigNumber number = *this;
 			if (!number.isZero()) {
 				number.m_positive = !number.isPositive();
@@ -213,7 +213,7 @@ class BigNumber {
 		 * @param number the number to be added.
 		 * @return the sum of both BigNumbers.
 		 */
-		BigNumber operator+(const BigNumber& number) const {
+		BigNumber operator+(const BigNumber& number) const noexcept(true) {
 			if (this->isPositive() && !number.isPositive()) {
 				return *this - number.absoluteValue();
 			} else if (!this->isPositive() && number.isPositive()) {
@@ -263,7 +263,7 @@ class BigNumber {
 		 * @param number the BigNumber to be subtracted.
 		 * @return the result of the subtraction
 		 */
-		BigNumber operator-(const BigNumber& number) const {
+		BigNumber operator-(const BigNumber& number) const noexcept(true) {
 			if (this->isPositive() && !number.isPositive()) {
 				return *this + number.absoluteValue();
 			} else if (!this->isPositive() && number.isPositive()) {
@@ -319,7 +319,7 @@ class BigNumber {
 		 * @param number the number to be multiplied by.
 		 * @return the result of the multiplication.
 		 */
-		BigNumber operator*(const BigNumber& number) const {
+		BigNumber operator*(const BigNumber& number) const noexcept(true) {
 			if (this->isZero() || number.isZero()) {
 				return BigNumber(0);
 			}
@@ -359,7 +359,7 @@ class BigNumber {
 		 * @param number number to divide by.
 		 * @return result of division.
 		 */
-		BigNumber operator/(const BigNumber& number) const {
+		BigNumber operator/(const BigNumber& number) const noexcept(false) {
 			return this->divide(number).first;
 		}
 
@@ -369,7 +369,7 @@ class BigNumber {
 		 * @param number the divisor number.
 		 * @return the result of the module operator.
 		 */
-		BigNumber operator%(const BigNumber& number) const {
+		BigNumber operator%(const BigNumber& number) const noexcept(false) {
 			return this->divide(number).second;
 		}
 
@@ -382,7 +382,7 @@ class BigNumber {
 		 * @param number the desired power.
 		 * @return THIS to the power of NUMBER.
 		 */
-		BigNumber pow(BigNumber number) const {
+		BigNumber pow(BigNumber number) const noexcept(false) {
 			if (this->isZero() && number.isZero()) {
 				throw std::invalid_argument("Zero to the power of Zero is undefined.");
 			}
@@ -410,7 +410,7 @@ class BigNumber {
 		 * @param mod the module wanted.
 		 * @return this to the power power module mod.
 		 */
-		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const {
+		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const noexcept(false) {
 			if (mod.isZero()) {
 				throw std::invalid_argument("Module by Zero is undefined.");
 			}
@@ -434,31 +434,31 @@ class BigNumber {
 		/*
 		 * Assigment operators.
 		 */
-		BigNumber& operator+=(const BigNumber& number) {
+		BigNumber& operator+=(const BigNumber& number) noexcept(true) {
 			*this = *this + number;
 			return *this;
 		}
 
 
-		BigNumber& operator-=(const BigNumber& number) {
+		BigNumber& operator-=(const BigNumber& number) noexcept(true) {
 			*this = *this - number;
 			return *this;
 		}
 
 
-		BigNumber& operator*=(const BigNumber& number) {
+		BigNumber& operator*=(const BigNumber& number) noexcept(true) {
 			*this = *this * number;
 			return *this;
 		}
 
 
-		BigNumber& operator/=(const BigNumber& number) {
+		BigNumber& operator/=(const BigNumber& number) noexcept(false) {
 			*this = *this / number;
 			return *this;
 		}
 
 
-		BigNumber& operator%=(const BigNumber& number) {
+		BigNumber& operator%=(const BigNumber& number) noexcept(false) {
 			*this = *this % number;
 			return *this;
 		}
@@ -467,26 +467,26 @@ class BigNumber {
 		/*
 		 * Increment / Decrement operators.
 		 */
-		BigNumber& operator++() {
+		BigNumber& operator++() noexcept(true) {
 			*this += 1;
 			return *this;
 		}
 
 
-		BigNumber& operator--() {
+		BigNumber& operator--() noexcept(true) {
 			*this -= 1;
 			return *this;
 		}
 
 
-		BigNumber operator++(int) {
+		BigNumber operator++(int) noexcept(true) {
 			BigNumber copy = *this;
 			*this += 1;
 			return copy;
 		}
 
 
-		BigNumber operator--(int) {
+		BigNumber operator--(int) noexcept(true) {
 			BigNumber copy = *this;
 			*this -= 1;
 			return copy;
@@ -496,7 +496,7 @@ class BigNumber {
 		/*
 		 * Relational operators
 		 */
-		bool operator<(const BigNumber& number) const {
+		bool operator<(const BigNumber& number) const noexcept(true) {
 			if (this->m_positive != number.m_positive) {  // oposite signs.
 				return !this->m_positive;
 			}
@@ -511,27 +511,27 @@ class BigNumber {
 		}
 
 
-		bool operator>(const BigNumber& number) const {
+		bool operator>(const BigNumber& number) const noexcept(true) {
 			return *this >= number && !(*this == number);
 		}
 
 
-		bool operator<=(const BigNumber& number) const {
+		bool operator<=(const BigNumber& number) const noexcept(true) {
 			return *this == number || *this < number;
 		}
 
 
-		bool operator>=(const BigNumber& number) const {
+		bool operator>=(const BigNumber& number) const noexcept(true) {
 			return !(*this < number);
 		}
 
 
-		bool operator==(const BigNumber& number) const {
+		bool operator==(const BigNumber& number) const noexcept(true) {
 			return this->m_positive == number.m_positive && this->m_values == number.m_values;
 		}
 
 
-		bool operator!=(const BigNumber& number) const {
+		bool operator!=(const BigNumber& number) const noexcept(true) {
 			return !(*this == number);
 		}
 
@@ -557,7 +557,7 @@ class BigNumber {
 		 * @brief asString methot that creates a string representation of a BigNumber.
 		 * @return a string representing the BigNumber.
 		 */
-		std::string asString() const {
+		std::string asString() const noexcept(true) {
 			std::stringstream ss;
 			if (!this->m_positive) {
 				ss << '-';
@@ -579,7 +579,7 @@ class BigNumber {
 		 * @brief absoluteValue gets the absolute value of a BigNumber,
 		 * @return a BigNumber copy, but positive, the absolute value.
 		 */
-		BigNumber absoluteValue() const {
+		BigNumber absoluteValue() const noexcept(true) {
 			BigNumber temp = *this;
 			temp.m_positive = true;
 			return temp;
@@ -591,7 +591,7 @@ class BigNumber {
 		 * @param times how many times it shoud be multiplied by 10. Default is 1.
 		 * @return the number times 10 n times.
 		 */
-		BigNumber times10(int times = 1) const {
+		BigNumber times10(int times = 1) const noexcept(true) {
 			BigNumber temp = *this;
 			for (int i = 0; i < times; i++) {
 				temp.m_values.insert(temp.m_values.begin(), 0);
@@ -606,8 +606,8 @@ class BigNumber {
 		 * @param times how many times it shoud be divided by 10. Default is 1.
 		 * @return the number divided by 10 n times.
 		 */
-		BigNumber divide10(int times = 1) const {
-			if (this->lenght() - times < 1) {
+		BigNumber divide10(int times = 1) const noexcept(true) {
+			if (times >= this->lenght()) {
 				return BigNumber(0);
 			}
 			BigNumber divided = *this;
@@ -624,7 +624,7 @@ class BigNumber {
 		 * The representation is signed-like, so the first char is 1 if the number is negative, 0 if positive.
 		 * @return a std::string representation of the BigNumber as binary.
 		 */
-		std::string asBinary() const {
+		std::string asBinary() const noexcept(true) {
 			std::stringstream ss;
 
 			BigNumber copy = this->absoluteValue();
@@ -649,7 +649,7 @@ class BigNumber {
 		 * If the param is not in range [0, this.lenght], it will be capped to it.
 		 * @return a pair of the result BigNumbers.
 		 */
-		std::pair<BigNumber, BigNumber> splitAt(long long splitPos) const {
+		std::pair<BigNumber, BigNumber> splitAt(long long splitPos) const noexcept(true) {
 			splitPos = std::min(std::max(splitPos, (long long) 0), this->lenght());  // cap values to [0, lengh]. I miss C++ 17 clamp.
 
 			std::vector<int> firstHalf;
@@ -676,7 +676,7 @@ class BigNumber {
 		 * @return if number fits in long long type.
 		 * Uses the lenght to calculate, since long long max is 9223372036854775807.
 		 */
-		bool fitsInLongLong() const {
+		bool fitsInLongLong() const noexcept(true) {
 			return this->lenght() < 19;
 		}
 
@@ -686,7 +686,7 @@ class BigNumber {
 		 * Throws exeption of type std::out_of_range if the number does not fit.
 		 * @return this BigNumber as a long long, if possible.
 		 */
-		long long asLongLong() const {
+		long long asLongLong() const noexcept(true) {
 			return std::stoll(this->asString());
 		}
 
@@ -695,7 +695,7 @@ class BigNumber {
 		 * @brief lenght method to get the lenght of given number, counting the digits.
 		 * @return the lenght of this BigNumber.
 		 */
-		long long lenght() const {
+		long long lenght() const noexcept(true) {
 			return this->m_values.size();
 		}
 
@@ -704,7 +704,7 @@ class BigNumber {
 		 * @brief isOdd simple method to se if a BigNumber is odd or not.
 		 * @return if the number is odd.
 		 */
-		bool isOdd() const {
+		bool isOdd() const noexcept(true) {
 			return this->m_values[0] & 1;
 		}
 
@@ -713,7 +713,7 @@ class BigNumber {
 		 * @brief isEven just a negative of isOdd.
 		 * @return if a number is even. Zero is considered even.
 		 */
-		bool isEven() const {
+		bool isEven() const noexcept(true) {
 			return !this->isOdd();
 		}
 
@@ -722,7 +722,7 @@ class BigNumber {
 		 * @brief isZero methot that tests if a number is zero, faster than Number == BigNumber(0).
 		 * @return if the object is 0.
 		 */
-		bool isZero() const {
+		bool isZero() const noexcept(true) {
 			return this->m_values.size() == 1 && this->m_values[0] == 0;
 		}
 
@@ -731,7 +731,7 @@ class BigNumber {
 		 * @brief isOne method that tests if a number is one, faster than creating an object.
 		 * @return is this object is 1.
 		 */
-		bool isOne() const {
+		bool isOne() const noexcept(true) {
 			return this->m_positive && this->m_values.size() == 1 && this->m_values[0] == 1;
 		}
 
@@ -740,7 +740,7 @@ class BigNumber {
 		 * @brief isPositive methot that returns if this number is positive or not.
 		 * @return if this object has positive value or not.
 		 */
-		bool isPositive() const {
+		bool isPositive() const noexcept(true) {
 			return this->m_positive;
 		}
 
@@ -755,7 +755,7 @@ class BigNumber {
 		 * @brief removeLeftZeros removes all the zeroes to the left of a number,
 		 * so 0008 becomes 8 and 000 becomes 0.
 		 */
-		void removeLeftZeros() {
+		void removeLeftZeros() noexcept(true) {
 			for (int i = this->m_values.size() - 1; i >= 1; i--) {  // until 1, not 0 so that 0 is represented as {0} and not {}
 				if (this->m_values[i] == 0) {
 					this->m_values.pop_back();  // pops all zeroes to the left of the number.
@@ -770,7 +770,7 @@ class BigNumber {
 		 * @brief afterOperation just a method that updates internal stuff,
 		 * should be called after most internal value update operations.
 		 */
-		void afterOperation() {
+		void afterOperation() noexcept(true) {
 			this->removeLeftZeros();
 			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
@@ -784,7 +784,7 @@ class BigNumber {
 		 * @return a pair, the first one is the division quocient, the second the division rest.
 		 * The division rest is ALWAYS positive, since ISO14882:2011 says that the sign of the remainder is implementation-defined.
 		 */
-		std::pair<BigNumber, BigNumber> divide(const BigNumber& number) const {
+		std::pair<BigNumber, BigNumber> divide(const BigNumber& number) const noexcept(false) {
 			if (number.isZero()) {
 				throw std::invalid_argument("Division | Module by 0 is undefined.");
 			}
@@ -835,7 +835,7 @@ class BigNumber {
 		 * @param vector the object m_values.
 		 * @param reversed if true, the vector will be read in the reverse order.
 		 */
-		BigNumber(const std::vector<int> &vector, bool reversed=false) {
+		BigNumber(const std::vector<int> &vector, bool reversed=false) noexcept(true) {
 			if (vector.size() > 0) {
 #ifdef BIG_NUMBER_DEBUG
 				for (int i = 0; i < vector.size(); i++) {

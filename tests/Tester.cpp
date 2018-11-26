@@ -11,7 +11,6 @@ int main(int argc, char *argv[]) {
 	using pr0crustes::BigNumber;
 
 
-
 	TF_ASSERT("Constructor 1",
 			  BigNumber("100"),
 			  BigNumber(100));
