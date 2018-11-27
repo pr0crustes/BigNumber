@@ -153,15 +153,35 @@ class BigNumber {
 				throw std::invalid_argument("[BigNumber] {Random BigNumber In Range} ->  Only works with positive BigNumbers.");
 			}
 
-			std::random_device rand_gen;
-			std::mt19937 eng(rand_gen());
-			std::uniform_int_distribution<int> dist(low.lenght(), hight.lenght());
+			BigNumber diff = hight - low;
 
-			BigNumber number = BigNumber::randomBigNumber(dist(eng));
-			while (number < low || number >= hight) {
-				number = BigNumber::randomBigNumber(dist(eng));
+			BigNumber randomDiffRange = BigNumber::randomBigNumber(diff.lenght());
+			BigNumber modR = randomDiffRange % diff;
+
+			BigNumber randomN = low + modR;
+
+			if (randomN < low || randomN >= hight) {
+				std::cerr << "Error: " << randomN
+									  << " | is not in range: ["
+									  << low << ", "
+									  << hight << "[ with diff: "
+									  << diff << " and randomDiff: "
+									  << randomDiffRange << " and modR "
+									  << modR << std::endl;
+				exit(1);
 			}
-			return number;
+
+			return randomN;
+
+//			std::random_device rand_gen;
+//			std::mt19937 eng(rand_gen());
+//			std::uniform_int_distribution<int> dist(low.lenght(), hight.lenght());
+
+//			BigNumber number = BigNumber::randomBigNumber(dist(eng));
+//			while (number < low || number >= hight) {
+//				number = BigNumber::randomBigNumber(dist(eng));
+//			}
+//			return number;
 		}
 
 
@@ -236,23 +256,8 @@ class BigNumber {
 				} else {
 					result.m_values.push_back(digit);  // no digit in this position, add to the end of vector.
 				}
-
-#ifdef BIG_NUMBER_DEBUG
-				if (result.m_values[i] > 19) {
-					std::cerr << "[BigNumber] {Addition} ->  Invalid value in m_value: " << result.m_values[i] << std::endl;
-					exit(1);
-				}
-#endif
-				// Carry over.
-				if (result.m_values[i] > 9) {
-					result.m_values[i] %= 10;
-					if (i + 1 < result.lenght()) {  // if there is a digit to the left.
-						result.m_values[i + 1]++;  // add one to it, it will be checked in the next iteration.
-					} else {
-						result.m_values.push_back(1);  // push 1.
-					}
-				}
 			}
+			result.doCarryOver();
 			result.afterOperation();
 			return result;
 		}
@@ -775,6 +780,25 @@ class BigNumber {
 
 
 		/**
+		 * @brief doCarryOver utility method for addition, that does the carryover.
+		 */
+		void doCarryOver() noexcept(true) {
+			for (int i = 0; i < this->lenght(); i++) {
+				if (this->m_values[i] > 9) {
+					this->m_values[i] -= 10;
+					if (i + 1 < this->lenght()) {
+						this->m_values[i + 1]++;
+					} else {
+						this->m_values.push_back(1);
+						doCarryOver();
+						break;
+					}
+				}
+			}
+		}
+
+
+		/**
 		 * @brief afterOperation just a method that updates internal stuff,
 		 * should be called after most internal value update operations.
 		 */
@@ -783,6 +807,14 @@ class BigNumber {
 			if (this->isZero()) {  // prevents -0.
 				this->m_positive = true;
 			}
+#ifdef BIG_NUMBER_DEBUG
+			for (int i = 0; i < this->lenght(); i++) {
+				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
+					std::cerr << "[BigNumber] {After Operation} Invalid value in vector: " << this->m_values[i] << std::endl;
+					exit(1);
+				}
+			}
+#endif
 		}
 
 

@@ -6,9 +6,10 @@
 #include "../include/BigNumber.h"
 
 
-int main(int argc, char *argv[]) {
+using pr0crustes::BigNumber;
 
-	using pr0crustes::BigNumber;
+
+int main(int argc, char *argv[]) {
 
 
 	TF_ASSERT("Constructor 1",
