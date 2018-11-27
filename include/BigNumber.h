@@ -155,33 +155,12 @@ class BigNumber {
 
 			BigNumber diff = hight - low;
 
-			BigNumber randomDiffRange = BigNumber::randomBigNumber(diff.lenght());
+			BigNumber randomDiffRange = BigNumber::randomBigNumber(diff.lenght() + 1);  // + 1 makes sure the generated value is greater then diff.
 			BigNumber modR = randomDiffRange % diff;
 
 			BigNumber randomN = low + modR;
 
-			if (randomN < low || randomN >= hight) {
-				std::cerr << "Error: " << randomN
-									  << " | is not in range: ["
-									  << low << ", "
-									  << hight << "[ with diff: "
-									  << diff << " and randomDiff: "
-									  << randomDiffRange << " and modR "
-									  << modR << std::endl;
-				exit(1);
-			}
-
 			return randomN;
-
-//			std::random_device rand_gen;
-//			std::mt19937 eng(rand_gen());
-//			std::uniform_int_distribution<int> dist(low.lenght(), hight.lenght());
-
-//			BigNumber number = BigNumber::randomBigNumber(dist(eng));
-//			while (number < low || number >= hight) {
-//				number = BigNumber::randomBigNumber(dist(eng));
-//			}
-//			return number;
 		}
 
 
