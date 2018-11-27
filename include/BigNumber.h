@@ -45,7 +45,7 @@ static int charToInt(char c) noexcept(false) {
 		case '8': return 8;
 		case '9': return 9;
 		default:
-			std::string message("Char at string is not a valid int. Received: ");
+			std::string message("[BigNumber] {Digit Parsing} ->  Char at string is not a valid int. Received: ");
 			message.push_back(c);
 			throw std::invalid_argument(message);
 	}
@@ -121,7 +121,7 @@ class BigNumber {
 		 */
 		static BigNumber randomBigNumber(int lenght) noexcept(false) {
 			if (lenght <= 0) {
-				throw std::invalid_argument("RandomBigNumber size must be larger or equal to 1.");
+				throw std::invalid_argument("[BigNumber] {Random BigNumber} ->  RandomBigNumber size must be larger or equal to 1.");
 			}
 
 			std::stringstream ss;
@@ -147,10 +147,10 @@ class BigNumber {
 		 */
 		static BigNumber randomBigNumberInRange(const BigNumber& low, const BigNumber& hight) noexcept(false) {
 			if (low >= hight) {
-				throw std::invalid_argument("Lower bound cannot be bigger or equal to higher bound.");
+				throw std::invalid_argument("[BigNumber] {Random BigNumber In Range} ->  Lower bound cannot be bigger or equal to higher bound.");
 			}
 			if (!low.isPositive() || !hight.isPositive()) {
-				throw std::invalid_argument("RandomBigNumberInRange only works with positive BigNumbers.");
+				throw std::invalid_argument("[BigNumber] {Random BigNumber In Range} ->  Only works with positive BigNumbers.");
 			}
 
 			std::random_device rand_gen;
@@ -229,9 +229,9 @@ class BigNumber {
 			// At this point, both signs are equal.
 			BigNumber result = *this;  // not a pointer, since it will hold the result.
 
-			for (int i = 0; i < number.m_values.size(); i++) {  // the numbers will be iterated in normal order, units to hundreds.
+			for (int i = 0; i < number.lenght(); i++) {  // the numbers will be iterated in normal order, units to hundreds.
 				int digit = number.m_values[i];
-				if (i < result.m_values.size()) {  // if there is a digit at the same position in the other number.
+				if (i < result.lenght()) {  // if there is a digit at the same position in the other number.
 					result.m_values[i] += digit;  // sum to it.
 				} else {
 					result.m_values.push_back(digit);  // no digit in this position, add to the end of vector.
@@ -239,14 +239,14 @@ class BigNumber {
 
 #ifdef BIG_NUMBER_DEBUG
 				if (result.m_values[i] > 19) {
-					std::cerr << "Invalid value in m_value: " << result.m_values[i] << std::endl;
+					std::cerr << "[BigNumber] {Addition} ->  Invalid value in m_value: " << result.m_values[i] << std::endl;
 					exit(1);
 				}
 #endif
 				// Carry over.
 				if (result.m_values[i] > 9) {
 					result.m_values[i] %= 10;
-					if (i + 1 < result.m_values.size()) {  // if there is a digit to the left.
+					if (i + 1 < result.lenght()) {  // if there is a digit to the left.
 						result.m_values[i + 1]++;  // add one to it, it will be checked in the next iteration.
 					} else {
 						result.m_values.push_back(1);  // push 1.
@@ -282,7 +282,7 @@ class BigNumber {
 			// since when subtracting 20 from 2 what you do is 20 - 2  and then reverse the signal.
 			BigNumber result;  // result is not a pointer, since it will hold the result.
 			const BigNumber* smaller;  // pointer to the smaller number. Read only.
-			if (this->m_values.size() >= number.m_values.size()) {
+			if (this->lenght() >= number.lenght()) {
 				result = *this;
 				smaller = &number;
 			} else {
@@ -290,11 +290,11 @@ class BigNumber {
 				smaller = this;
 			}
 
-			for (int i = 0; i < smaller->m_values.size(); i++) {   // iterate in normal order, units to hundreds.
+			for (int i = 0; i < smaller->lenght(); i++) {   // iterate in normal order, units to hundreds.
 				int dif = result.m_values[i] - smaller->m_values[i];
 				if (dif < 0) {  // subtraction cannot be done without borrowing.
 					// search for a number to borrow.
-					for (int j = i + 1; j < result.m_values.size(); j++) {
+					for (int j = i + 1; j < result.lenght(); j++) {
 						if (result.m_values[j] == 0) {  // replace 0's with 9 until finding a non-zero number.
 							result.m_values[j] = 9;
 						} else {  // subtract one from it and add 10 to the dif.
@@ -330,7 +330,7 @@ class BigNumber {
 				return *this;
 			}
 
-			if (this->lenght() < 10 && number.lenght() < 10) {
+			if (this->lenght() < 10 && number.lenght() < 10) {  // result can fit in a long long.
 				return BigNumber(this->asLongLong() * number.asLongLong());
 			}
 
@@ -358,6 +358,7 @@ class BigNumber {
 		 * If you want the reaminder of a division, see the `%` operator.
 		 * @param number number to divide by.
 		 * @return result of division.
+		 * Throws in case of division by 0.
 		 */
 		BigNumber operator/(const BigNumber& number) const noexcept(false) {
 			return this->divide(number).first;
@@ -368,6 +369,7 @@ class BigNumber {
 		 * @brief operator % module operator. This function does not work with negative numbers.
 		 * @param number the divisor number.
 		 * @return the result of the module operator.
+		 * Throws in case of module by 0.
 		 */
 		BigNumber operator%(const BigNumber& number) const noexcept(false) {
 			return this->divide(number).second;
@@ -384,10 +386,10 @@ class BigNumber {
 		 */
 		BigNumber pow(BigNumber number) const noexcept(false) {
 			if (this->isZero() && number.isZero()) {
-				throw std::invalid_argument("Zero to the power of Zero is undefined.");
+				throw std::invalid_argument("[BigNumber] {Pow} ->  Zero to the power of Zero is undefined.");
 			}
-			if (number < BigNumber(0)) {
-				throw std::invalid_argument("Power cannot be negative, yet.");
+			if (!number.isPositive()) {
+				throw std::invalid_argument("[BigNumber] {Pow} ->  Power cannot be negative.");
 			}
 			if (this->isZero()) {
 				return BigNumber(0);
@@ -412,13 +414,13 @@ class BigNumber {
 		 */
 		BigNumber modPow(const BigNumber& power, const BigNumber& mod) const noexcept(false) {
 			if (mod.isZero()) {
-				throw std::invalid_argument("Module by Zero is undefined.");
+				throw std::invalid_argument("[BigNumber] {Mod Pow} ->  Module by Zero is undefined.");
 			}
 			if (this->isZero() && power.isZero()) {
-				throw std::invalid_argument("Zero to the power of Zero is undefined.");
+				throw std::invalid_argument("[BigNumber] {Mod Pow} ->  Zero to the power of Zero is undefined.");
 			}
 			if (!power.isPositive()) {
-				throw std::invalid_argument("Power cannot be negative.");
+				throw std::invalid_argument("[BigNumber] {Mod Pow} ->  Power cannot be negative.");
 			}
 			if (this->isZero()) {
 				return BigNumber(0);
@@ -500,8 +502,8 @@ class BigNumber {
 			if (this->m_positive != number.m_positive) {  // oposite signs.
 				return !this->m_positive;
 			}
-			if (this->m_values.size() != number.m_values.size()) {  // not the same lenght.
-				return this->m_values.size() < number.m_values.size();
+			if (this->lenght() != number.lenght()) {  // not the same lenght.
+				return this->lenght() < number.lenght();
 			}
 			// at this point, both are the same lenght.
 			if (this->m_positive) {  // both positives.
@@ -559,13 +561,13 @@ class BigNumber {
 		 */
 		std::string asString() const noexcept(true) {
 			std::stringstream ss;
-			if (!this->m_positive) {
+			if (!this->isPositive()) {
 				ss << '-';
 			}
-			for (int i = this->m_values.size() - 1; i >= 0; i--) {  // reverse order, so that vector {1, 2, 3} prints 321 and not 123.
+			for (int i = this->lenght() - 1; i >= 0; i--) {  // reverse order, so that vector {1, 2, 3} prints 321 and not 123.
 #ifdef BIG_NUMBER_DEBUG
 				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
-					std::cerr << "m_values containing invalid value: " << this->m_values[i] << ". Aborting..."<< std::endl;
+					std::cerr << "[BigNumber] {As String} ->  m_values containing invalid value: " << this->m_values[i] << ". Aborting..."<< std::endl;
 					exit(1);
 				}
 #endif
@@ -729,7 +731,7 @@ class BigNumber {
 		 * @return if the object is 0.
 		 */
 		bool isZero() const noexcept(true) {
-			return this->m_values.size() == 1 && this->m_values[0] == 0;
+			return this->lenght() == 1 && this->m_values[0] == 0;
 		}
 
 
@@ -738,7 +740,7 @@ class BigNumber {
 		 * @return is this object is 1.
 		 */
 		bool isOne() const noexcept(true) {
-			return this->m_positive && this->m_values.size() == 1 && this->m_values[0] == 1;
+			return this->m_positive && this->lenght() == 1 && this->m_values[0] == 1;
 		}
 
 
@@ -762,7 +764,7 @@ class BigNumber {
 		 * so 0008 becomes 8 and 000 becomes 0.
 		 */
 		void removeLeftZeros() noexcept(true) {
-			for (int i = this->m_values.size() - 1; i >= 1; i--) {  // until 1, not 0 so that 0 is represented as {0} and not {}
+			for (int i = this->lenght() - 1; i >= 1; i--) {  // until 1, not 0 so that 0 is represented as {0} and not {}
 				if (this->m_values[i] == 0) {
 					this->m_values.pop_back();  // pops all zeroes to the left of the number.
 				} else {
@@ -789,10 +791,11 @@ class BigNumber {
 		 * @param number to divide by.
 		 * @return a pair, the first one is the division quocient, the second the division rest.
 		 * The division rest is ALWAYS positive, since ISO14882:2011 says that the sign of the remainder is implementation-defined.
+		 * Throws in case of division | module by 0.
 		 */
 		std::pair<BigNumber, BigNumber> divide(const BigNumber& number) const noexcept(false) {
 			if (number.isZero()) {
-				throw std::invalid_argument("Division | Module by 0 is undefined.");
+				throw std::invalid_argument("[BigNumber] {Divide} ->  Division | Module by 0 is undefined.");
 			}
 			if (number.isOne()) {
 				return std::make_pair(*this, BigNumber(0));
