@@ -300,7 +300,7 @@ void lessEqual_test() {
 			  true);
 
 	TF_ASSERT("Comp <= 2",
-			  BigNumber(633) <= BigNumber(660),
+			  BigNumber(633) <= 660,
 			  true);
 
 	TF_ASSERT("Comp <= 3",
@@ -327,7 +327,7 @@ void equal_test() {
 			  true);
 
 	TF_ASSERT("Comp == 5",
-			  BigNumber(70) == BigNumber(70),
+			  BigNumber(70) == 70,
 			  true);
 
 	TF_ASSERT("Comp == 6",
@@ -335,7 +335,7 @@ void equal_test() {
 			  false);
 
 	TF_ASSERT("Comp == 7",
-			  BigNumber(0) == BigNumber(22),
+			  BigNumber(0) == 22,
 			  false);
 }
 
@@ -365,24 +365,24 @@ void notEqual_test() {
 
 void asString_test() {
 	TF_ASSERT("AsString 1",
-			  BigNumber(0).asString() == "0",
-			  true);
+			  BigNumber(0).asString(),
+			  std::string("0"));
 
 	TF_ASSERT("AsString 2",
 			  BigNumber(0).asString() == "-0",
 			  false);
 
 	TF_ASSERT("AsString 3",
-			  BigNumber(-0).asString() == "0",
-			  true);
+			  BigNumber(-0).asString(),
+			  std::string("0"));
 
 	TF_ASSERT("AsString 4",
-			  BigNumber(-50).asString() == "-50",
-			  true);
+			  BigNumber(-50).asString(),
+			  std::string("-50"));
 
 	TF_ASSERT("AsString 5",
-			  BigNumber(-12300).asString() == "-12300",
-			  true);
+			  BigNumber(-12300).asString(),
+			  std::string("-12300"));
 }
 
 
