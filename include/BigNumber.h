@@ -10,7 +10,6 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
 #include <random>
 #include <iostream>
 #include <stdexcept>
@@ -547,20 +546,17 @@ class BigNumber {
 		 * @return a string representing the BigNumber.
 		 */
 		std::string asString() const noexcept(true) {
-			std::stringstream ss;
+			std::string ss;
+			int toReserve = this->lenght() + !this->isPositive();  // add 1 in case the number is negative, to hold the '-'.
+			ss.reserve(toReserve);
 			if (!this->isPositive()) {
-				ss << '-';
+				ss.push_back('-');
 			}
-			for (int i = this->lenght() - 1; i >= 0; i--) {  // reverse order, so that vector {1, 2, 3} prints 321 and not 123.
-#ifdef BIG_NUMBER_DEBUG
-				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
-					std::cerr << "[BigNumber] {As String} ->  m_values containing invalid value: " << (int) this->m_values[i] << ". Aborting..."<< std::endl;
-					exit(1);
-				}
-#endif
-				ss << (int) this->m_values[i];
+			for (int i = this->lenght() - 1; i >= 0; i--) {
+				// 48 is the distance between the char '0' and the char 'NUL'.
+				ss.push_back(this->m_values[i] + 48);
 			}
-			return ss.str();
+			return ss;
 		}
 
 
