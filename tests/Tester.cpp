@@ -111,6 +111,14 @@ void subtraction_test() {
 	TF_ASSERT("Sub 8",
 			  BigNumber(1000) - BigNumber(10),
 			  BigNumber(990));
+
+	TF_ASSERT("Sub 9",
+			  BigNumber("-11111111111111111111111111") - BigNumber("-11111111111111111111111112"),
+			  BigNumber(1));
+
+	TF_ASSERT("Sub 10",
+			  BigNumber("11111111111111111111111111") - BigNumber("11111111111111111111111112"),
+			  BigNumber(-1));
 }
 
 
