@@ -27,23 +27,23 @@
 
 
 /**
- * @brief charToInt function that converts a char to the int it represents.
+ * @brief charToIntChar function that converts a char to the char with the int it represents.
  * @param c the char to be parsed as int.
- * @return the int contained in c. E.g. '0' returns 0.
+ * @return the char with the value contained in c. E.g. '0' returns (char) 0.
  * Throws an exception if the char is not a number.
  */
-static int charToInt(char c) noexcept(false) {
+static char charToIntChar(char c) noexcept(false) {
 	switch (c) {  // Since values are only 0-9, this is way faster than atoi.
-		case '0': return 0;
-		case '1': return 1;
-		case '2': return 2;
-		case '3': return 3;
-		case '4': return 4;
-		case '5': return 5;
-		case '6': return 6;
-		case '7': return 7;
-		case '8': return 8;
-		case '9': return 9;
+		case '0': return (char) 0;
+		case '1': return (char) 1;
+		case '2': return (char) 2;
+		case '3': return (char) 3;
+		case '4': return (char) 4;
+		case '5': return (char) 5;
+		case '6': return (char) 6;
+		case '7': return (char) 7;
+		case '8': return (char) 8;
+		case '9': return (char) 9;
 		default:
 			std::string message("[BigNumber] {Digit Parsing} ->  Char at string is not a valid int. Received: ");
 			message.push_back(c);
@@ -76,7 +76,7 @@ class BigNumber {
 				}
 				this->m_values.reserve(string.length());
 				for (int i = string.size() - 1; i >= 0; i--) {    // from end to start, so that string 321 is represented as vector {1, 2, 3}.
-					this->m_values.push_back(charToInt(string[i]));
+					this->m_values.push_back(charToIntChar(string[i]));
 				}
 			} else {
 				this->m_values.push_back(0);  // init with 0 by default.
@@ -551,11 +551,11 @@ class BigNumber {
 			for (int i = this->lenght() - 1; i >= 0; i--) {  // reverse order, so that vector {1, 2, 3} prints 321 and not 123.
 #ifdef BIG_NUMBER_DEBUG
 				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
-					std::cerr << "[BigNumber] {As String} ->  m_values containing invalid value: " << this->m_values[i] << ". Aborting..."<< std::endl;
+					std::cerr << "[BigNumber] {As String} ->  m_values containing invalid value: " << (int) this->m_values[i] << ". Aborting..."<< std::endl;
 					exit(1);
 				}
 #endif
-				ss << this->m_values[i];
+				ss << (int) this->m_values[i];
 			}
 			return ss.str();
 		}
@@ -638,14 +638,14 @@ class BigNumber {
 		std::pair<BigNumber, BigNumber> splitAt(long long splitPos) const noexcept(true) {
 			splitPos = std::min(std::max(splitPos, (long long) 0), (long long) this->lenght());  // cap values to [0, lengh]. I miss C++ 17 clamp.
 
-			std::vector<int> firstHalf;
+			std::vector<char> firstHalf;
 			firstHalf.reserve(splitPos);
 
-			std::vector<int> secondHalf;
+			std::vector<char> secondHalf;
 			secondHalf.reserve(this->lenght() - splitPos);
 
 			for (size_t i = 0; i < this->lenght(); i++) {
-				int digit = this->m_values[i];
+				char digit = this->m_values[i];
 				if (i > splitPos - 1) {
 					firstHalf.push_back(digit);
 				} else {
@@ -740,7 +740,7 @@ class BigNumber {
 	private:
 
 		bool m_positive = true;  // positive by default.
-		std::vector<int> m_values;  // vector that will hold the digts. vector {1, 2, 3} means number 321.
+		std::vector<char> m_values;  // vector that will hold the digts. vector {(char) 1, (char) 2, (char) 3} means number 321.
 
 
 		/**
@@ -855,7 +855,7 @@ class BigNumber {
 		 * @param vector the object m_values.
 		 * @param reversed if true, the vector will be read in the reverse order.
 		 */
-		BigNumber(const std::vector<int> &vector, bool reversed=false) noexcept(true) {
+		BigNumber(const std::vector<char> &vector, bool reversed=false) noexcept(true) {
 			if (vector.size() > 0) {
 #ifdef BIG_NUMBER_DEBUG
 				for (int i = 0; i < vector.size(); i++) {
