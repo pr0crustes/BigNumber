@@ -10,10 +10,8 @@
 
 #include <string>
 #include <vector>
-#include <map>
 #include <sstream>
 #include <random>
-#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 
@@ -674,7 +672,7 @@ class BigNumber {
 
 		/**
 		 * @brief asLongLong returns a long long representation of this BigNumber object.
-		 * Throws exeption of type std::out_of_range if the number does not fit.
+		 * The number WILL overflow if the number does not fit. Maybe you should call `fitsInLongLong`?
 		 * @return this BigNumber as a long long, if possible.
 		 */
 		long long asLongLong() const noexcept(false) {
@@ -684,7 +682,16 @@ class BigNumber {
 				exit(1);
 			}
 #endif
-			return std::stoll(this->asString());
+			long long value = 0;
+			for (size_t i = this->lenght() - 1; i > 0; i--) {
+				value += this->m_values[i];
+				value *= 10;
+			}
+			value += this->m_values[0];
+			if (!this->isPositive()) {
+				value = -value;
+			}
+			return value;
 		}
 
 
