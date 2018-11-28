@@ -238,13 +238,17 @@ class BigNumber {
 		BigNumber operator-(const BigNumber& number) const noexcept(true) {
 			if (number.isZero()) {
 				return *this;
-			} else if (this->isZero()) {
+			}
+			if (this->isZero()) {
 				return -number;
-			} else if (this->isPositive() && !number.isPositive()) {
+			}
+			if (this->isPositive() && !number.isPositive()) {
 				return *this + number.absoluteValue();
-			} else if (!this->isPositive() && number.isPositive()) {
+			}
+			if (!this->isPositive() && number.isPositive()) {
 				return -(number + this->absoluteValue());
-			} else if (!this->isPositive() && !number.isPositive()) {
+			}
+			if (!this->isPositive() && !number.isPositive()) {
 				return -(this->absoluteValue() - number.absoluteValue());
 			}
 
@@ -296,7 +300,6 @@ class BigNumber {
 			if(number.isOne()) {
 				return *this;
 			}
-
 			if (this->lenght() < 10 && number.lenght() < 10) {  // result can fit in a long long.
 				return BigNumber(this->asLongLong() * number.asLongLong());
 			}
