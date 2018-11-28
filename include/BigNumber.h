@@ -30,22 +30,12 @@
  * Throws an exception if the char is not a number.
  */
 static char charToIntChar(char c) noexcept(false) {
-	switch (c) {  // Since values are only 0-9, this is way faster than atoi.
-		case '0': return (char) 0;
-		case '1': return (char) 1;
-		case '2': return (char) 2;
-		case '3': return (char) 3;
-		case '4': return (char) 4;
-		case '5': return (char) 5;
-		case '6': return (char) 6;
-		case '7': return (char) 7;
-		case '8': return (char) 8;
-		case '9': return (char) 9;
-		default:
-			std::string message("[BigNumber] {Digit Parsing} ->  Char at string is not a valid int. Received: ");
-			message.push_back(c);
-			throw std::invalid_argument(message);
+	if (c >= '0' && c <= '9') {
+		return c - '0';
 	}
+	std::string message("[BigNumber] {Digit Parsing} ->  Char at string is not a valid int. Received: ");
+	message.push_back(c);
+	throw std::invalid_argument(message);
 }
 
 
