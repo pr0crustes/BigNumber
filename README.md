@@ -32,6 +32,7 @@ or
 depending where you put the file.  
 
 #### Overview
+For simplicity reasons, this overview will use `using pr0crustes::BigNumber;`. If you prefer not to do so, you can access the BigNumber class as `pr0crustes::BigNumber`.  
 
 ###### Instantiation
 It is possible to instantiate a BigNumber in multiple ways:  
@@ -68,21 +69,31 @@ std::cout << (a % b) << std::endl;
 // Output: 270942235237579277245
 ```
 Relational operators, like `>`, `>=`, `<`, `<=`, `==`, `!=` are also overloaded.  
-###### Interface
+##### Interface
 * A BigNumber instance is printable, overloading `<<`, but you can also get it's std::string representation by calling `.asString()` in an instance.  
-* Use `.isPositive()` to check if an instance is positive or not.  
-* Use `.isZero()` to check if an instance is zero, faster than comparing to another object.  
-* Use `.isOne()` to check if an instance is one (positive), faster than comparing to another object.  
-* Use `.lenght()` to get the count of how many digits an instance has.  
-* Use `.isOdd()` or `.isEven()` to check if an instance is Odd or Even.  
-* Use `.fitsInLongLong()` to check if an instance can be safelly converted to a long long.  
-* Use `.asLongLong()` to get the value of an instance as a long long.  
 * Use `.absoluteValue()` to get a NEW instance of BigNumber with the absolute value of the instance called on.  
-* Use `.times10(int t)` to get a the result of the instace times 10 to the power of `t`, basically multiplying by 10 `t` times. This is faster than multiplying by 10.  
-* Use `.pow(BigNumber n)` to get the result of the instance to the `n` power. This operation is expensive and can take a while with larger `n`s. Use `.modPow()` if possible.  
+* Use `.asBinary()` to get a binary representation of the BigNumber. The first Bit indicates if it is negative or not.  
+* Use `.asLongLong()` to get the value of an instance as a long long.  
+* Use `.divide10(int N)` to quickly divide a bignumber by 10, N times.
+* Use `.fitsInLongLong()` to check if an instance can be safelly converted to a long long.  
+* Use `.fromBinary(std::string binary, bool isSigned)` (static) to create a new instance from a binary string. By default, the first bit will be interpreted as a negative indicator. To supress it, pass `false` to the `isSigned` arg.  
+* Use `.isOdd()` or `.isEven()` to check if an instance is Odd or Even.  
+* Use `.isPositive()` to check if an instance is positive or not.  
+* Use `.isOne()` to check if an instance is one (positive), faster than comparing to another object.  
+* Use `.isZero()` to check if an instance is zero, faster than comparing to another object.  
+* Use `.lenght()` to get the count of how many digits an instance has.  
 * Use `.modPow(BigNumber p, BigNumber m)` to get the result of the module `m` of the instance to the power of `p`, this is (instance ^ p) % m. This is way faster than `.pow()` and should be used intead of doing `instance.pow(p) % m`.  
+* Use `.pow(BigNumber N)` to get the result of the instance to the `n` power. This operation is expensive and can take a while with larger `N`s. Use `.modPow()` if possible.  
+* Use `.times10(int N)` to get a the result of the instace times 10 to the power of `N`, basically multiplying by 10 `N` times. This is faster than multiplying by 10.  
+
 * Use `BigNumber::randomBigNumber(int l)` (static) to get a random BigNumber instance with  `l` digits. THIS USES A PSEUDO-RANDOM FUNCTION. DO NOT RELY IN IT BEING COMPLETELY RANDOM.  
 * Use `BigNumber::randomBigNumberInRange(BigNumber l, BigNumber h)` (static) to get a random BigNumber instance that will be `>= l` and `< h`. THIS USES A PSEUDO-RANDOM FUNCTION. DO NOT RELY IN IT BEING COMPLETELY RANDOM.  
+
+###### Randomness
+All random functions are pseudo-random function.  
+Do not rely in it being completely random.  
+Although, using pseudo generation, the results seens to be uniform, as shows the graph.  
+<img src="imgs/random_generation.png" >
   
 ##### Warning
 A few methods will throw exceptions of type `std::invalid_argument` in case an invalid operation is attempted, like instantiating a BigNumber from a non-number string, dividing by 0, module operation by 0.  
