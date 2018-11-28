@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <sstream>
 #include <iostream>
 #include <stdexcept>
 
@@ -235,34 +236,30 @@ class BigNumber {
 		 * @return the result of the subtraction
 		 */
 		BigNumber operator-(const BigNumber& number) const noexcept(true) {
-			if (this->isPositive() && !number.isPositive()) {
+			if (number.isZero()) {
+				return *this;
+			} else if (this->isZero()) {
+				return -number;
+			} else if (this->isPositive() && !number.isPositive()) {
 				return *this + number.absoluteValue();
 			} else if (!this->isPositive() && number.isPositive()) {
 				return -(number + this->absoluteValue());
+			} else if (!this->isPositive() && !number.isPositive()) {
+				return -(this->absoluteValue() - number.absoluteValue());
 			}
 
-			if (number.isZero()) {
-				return *this;
-			}
-			if (this->isZero()) {
-				return number;
-			}
-
-			// At this point, both signs are equal.
+			// At this point, both signs are positive and this is equal or larger than number in number of digits.
 			// To subtract one number from other, it is important to know the larger and the smaller one,
 			// since when subtracting 20 from 2 what you do is 20 - 2  and then reverse the signal.
-			BigNumber result;  // result is not a pointer, since it will hold the result.
-			const BigNumber* smaller;  // pointer to the smaller number. Read only.
-			if (this->lenght() >= number.lenght()) {
-				result = *this;
-				smaller = &number;
-			} else {
-				result = number;
-				smaller = this;
+			if (number > *this) {
+				return -(number - *this);
 			}
 
-			for (int i = 0; i < smaller->lenght(); i++) {   // iterate in normal order, units to hundreds.
-				int dif = result.m_values[i] - smaller->m_values[i];
+			BigNumber result = *this;
+			result.m_positive = true;
+
+			for (int i = 0; i < number.lenght(); i++) {   // iterate in normal order, units to hundreds.
+				int dif = result.m_values[i] - number.m_values[i];
 				if (dif < 0) {  // subtraction cannot be done without borrowing.
 					// search for a number to borrow.
 					for (int j = i + 1; j < result.lenght(); j++) {
@@ -278,7 +275,6 @@ class BigNumber {
 
 				result.m_values[i] = dif;
 			}
-			result.m_positive = *this >= number;  // If this is less than the number being subtracted, result will be negative.
 			result.afterOperation();
 			return result;
 		}
