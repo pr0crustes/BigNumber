@@ -543,8 +543,7 @@ class BigNumber {
 				ss.push_back('-');
 			}
 			for (int i = this->lenght() - 1; i >= 0; i--) {
-				// 48 is the distance between the char '0' and the char 'NUL'.
-				ss.push_back(this->m_values[i] + 48);
+				ss.push_back(this->m_values[i] + '0');
 			}
 			return ss;
 		}
