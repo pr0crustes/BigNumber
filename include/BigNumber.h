@@ -760,17 +760,17 @@ class BigNumber {
 
 		/**
 		 * @brief doCarryOver utility method for addition, that does the carryover.
+		 * @param start the point to start the parsing, used to recall the function recursively.
 		 */
-		void doCarryOver() noexcept(true) {
-			for (int i = 0; i < this->lenght(); i++) {
+		void doCarryOver(int start = 0) noexcept(true) {
+			for (int i = start; i < this->lenght(); i++) {
 				if (this->m_values[i] > 9) {
 					this->m_values[i] -= 10;
 					if (i + 1 < this->lenght()) {
 						this->m_values[i + 1]++;
 					} else {
 						this->m_values.push_back(1);
-						doCarryOver();
-						break;
+						return doCarryOver(i);
 					}
 				}
 			}
