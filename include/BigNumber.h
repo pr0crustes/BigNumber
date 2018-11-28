@@ -491,9 +491,14 @@ class BigNumber {
 			}
 			// at this point, both are the same lenght.
 			if (this->m_positive) {  // both positives.
-				return this->asString() < number.asString();  // compare string representation.
+				for (int i = this->lenght() - 1; i >= 0 ; i--) {
+					if (number.m_values[i] > this->m_values[i]) {
+						return true;
+					}
+				}
+				return false;
 			}
-			return -(*this) > -number;  // both negatives.
+			return this->absoluteValue() > number.absoluteValue();  // both negatives.
 		}
 
 
@@ -789,7 +794,7 @@ class BigNumber {
 #ifdef BIG_NUMBER_DEBUG
 			for (int i = 0; i < this->lenght(); i++) {
 				if (this->m_values[i] < 0 || this->m_values[i] > 9) {
-					std::cerr << "[BigNumber] {After Operation} Invalid value in vector: " << this->m_values[i] << std::endl;
+					std::cerr << "[BigNumber] {After Operation} Invalid value in vector: " << (int) this->m_values[i] << std::endl;
 					exit(1);
 				}
 			}
@@ -860,7 +865,7 @@ class BigNumber {
 #ifdef BIG_NUMBER_DEBUG
 				for (int i = 0; i < vector.size(); i++) {
 					if (vector[i] < 0 || vector[i] > 9) {
-						std::cerr << "[BigNumber] {Vector Constructor} Invalid value in vector: " << vector[i] << std::endl;
+						std::cerr << "[BigNumber] {Vector Constructor} Invalid value in vector: " << (int) vector[i] << std::endl;
 						exit(1);
 					}
 				}
