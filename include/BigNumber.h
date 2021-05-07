@@ -216,7 +216,7 @@ class BigNumber {
 			if (this->isPositive() && !number.isPositive()) {
 				return *this - number.absoluteValue();
 			} else if (!this->isPositive() && number.isPositive()) {
-				return -(number - this->absoluteValue());
+				return number - this->absoluteValue();
 			}
 
 			if (number.isZero()) {
@@ -258,7 +258,7 @@ class BigNumber {
 				return *this;
 			}
 			if (this->isZero()) {
-				return number;
+				return -number;
 			}
 
 			// At this point, both signs are equal.
@@ -409,11 +409,23 @@ class BigNumber {
 			if (this->isZero()) {
 				return BigNumber(0);
 			}
-			BigNumber result(1);
-			for (BigNumber i = 0; i < power; i++) {  // repeat power times.
-				result = (*this * result) % mod;
+			if (power.isZero()) {
+				return BigNumber(1);
 			}
-			return result;
+			
+			std::string pow_bin = power.asBinary();
+			int bin_indx = pow_bin.length()-2;
+			BigNumber mod_result = *this % mod;
+			BigNumber mod_sum = mod_result;
+			
+			while (bin_indx > 0) {
+				mod_result = (mod_result * mod_result) % mod;
+				if (pow_bin.at(bin_indx) == '1') {
+					mod_sum *= mod_result;
+				}
+				bin_indx--;
+			}
+			return mod_sum % mod;
 		}
 
 
